@@ -3,588 +3,749 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>大便超人大冒险</title>
+    <title>校园卡办理 · 官方指引 - 某某大学</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        .step-content { display: none; }
+        .step-content.active { display: block; }
+        .progress-fill {
+            transition: width 0.3s ease;
         }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #87CEEB, #98FB98);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .hover-scale {
+            transition: transform 0.2s ease;
         }
-
-        .header {
-            text-align: center;
-            margin: 20px 0;
-            color: #8B4513;
-        }
-
-        .header h1 {
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            margin-bottom: 10px;
-        }
-
-        .game-container {
-            background: #fff;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            max-width: 800px;
-            width: 90%;
-        }
-
-        .game-area {
-            width: 100%;
-            height: 400px;
-            background: linear-gradient(to bottom, #87CEEB 0%, #90EE90 100%);
-            border: 3px solid #8B4513;
-            border-radius: 15px;
-            position: relative;
-            overflow: hidden;
-            cursor: crosshair;
-        }
-
-        .character {
-            position: absolute;
-            width: 60px;
-            height: 60px;
-            font-size: 50px;
-            transition: all 0.3s ease;
-            user-select: none;
-        }
-
-        .poop-hero {
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-        }
-
-        .enemy {
-            top: 20px;
-            animation: moveEnemy 3s linear infinite;
-        }
-
-        @keyframes moveEnemy {
-            0% { left: -60px; }
-            100% { left: 100%; }
-        }
-
-        .score-board {
-            display: flex;
-            justify-content: space-between;
-            margin: 20px 0;
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #8B4513;
-        }
-
-        .controls {
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        .btn {
-            background: #FF6B6B;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 25px;
-            font-size: 1.1em;
-            cursor: pointer;
-            margin: 0 10px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        .btn:hover {
-            background: #FF5252;
-            transform: translateY(-2px);
-        }
-
-        .instructions {
-            background: #FFF8DC;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 20px 0;
-            border-left: 5px solid #FF6B6B;
-        }
-
-        .power-up {
-            position: absolute;
-            font-size: 30px;
-            animation: float 2s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .explosion {
-            position: absolute;
-            font-size: 40px;
-            animation: explode 0.5s ease-out;
-            pointer-events: none;
-        }
-
-        @keyframes explode {
-            0% { transform: scale(0) rotate(0deg); opacity: 1; }
-            100% { transform: scale(2) rotate(360deg); opacity: 0; }
-        }
-
-        .game-over {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.95);
-            padding: 30px;
-            border-radius: 20px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            display: none;
-            z-index: 100;
-        }
-
-        .bullet {
-            position: absolute;
-            font-size: 25px;
-            z-index: 5;
-        }
-
-        @media (max-width: 600px) {
-            .header h1 {
-                font-size: 1.8em;
-            }
-            
-            .btn {
-                padding: 10px 20px;
-                font-size: 1em;
-                margin: 5px;
-            }
-            
-            .game-area {
-                height: 300px;
-            }
+        .hover-scale:hover {
+            transform: scale(1.02);
         }
     </style>
 </head>
-<body>
-    <div class="header">
-        <h1>🦸‍♂️💩 大便超人大冒险 💩🦸‍♂️</h1>
-        <p>帮助大便超人保护城市，击败邪恶的细菌怪物！</p>
-    </div>
-
-    <div class="game-container">
-        <div class="score-board">
-            <div>得分: <span id="score">0</span></div>
-            <div>生命: <span id="lives">❤️❤️❤️</span></div>
-            <div>等级: <span id="level">1</span></div>
-        </div>
-
-        <div class="game-area" id="gameArea">
-            <div class="character poop-hero" id="hero">💩</div>
-            <div class="game-over" id="gameOver">
-                <h2>🎮 游戏结束！</h2>
-                <p>你的最终得分: <span id="finalScore">0</span></p>
-                <p>大便超人等级: <span id="finalLevel">1</span></p>
-                <button class="btn" onclick="restartGame()">🔄 重新开始</button>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-gray-200">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-900 text-white flex items-center justify-center font-bold text-lg">
+                    卡
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-gray-900">校园卡办理 · 官方指引</h1>
+                    <p class="text-xs text-gray-500">10 分钟完成｜流程透明｜隐私受保护</p>
+                </div>
+            </div>
+            <div class="hidden md:flex items-center gap-4">
+                <button onclick="showPrivacy()" class="text-sm text-gray-600 hover:text-gray-900 underline underline-offset-4">
+                    隐私说明
+                </button>
+                <a href="#book-now" class="px-4 py-2 rounded-xl bg-blue-900 text-white text-sm hover:bg-blue-800 transition-colors">
+                    立即预约办理
+                </a>
             </div>
         </div>
+    </header>
 
-        <div class="controls">
-            <button class="btn" onclick="moveLeft()">⬅️ 左移</button>
-            <button class="btn" onclick="shoot()">🚀 发射</button>
-            <button class="btn" onclick="moveRight()">➡️ 右移</button>
+    <!-- Hero Section -->
+    <section class="max-w-6xl mx-auto px-4 pt-8 pb-6">
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="md:col-span-2">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
+                    面向大一新生的<span class="px-2 py-1 rounded-xl bg-yellow-100 ml-2">可信</span>办理指南
+                </h2>
+                <p class="mt-3 text-gray-600">
+                    我们理解你对个人信息与收费的顾虑。这份页面把每一步会发生什么、需要花多久、会花多少钱、如何止损
+                    都讲清楚了。你可以边看边打勾，进度会自动保存。
+                </p>
+                
+                <!-- Progress Bar -->
+                <div class="mt-4 flex items-center gap-3">
+                    <div class="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
+                        <div id="progressBar" class="h-full bg-blue-900 progress-fill" style="width: 0%"></div>
+                    </div>
+                    <span id="progressText" class="text-sm text-gray-600">完成度 0%</span>
+                </div>
+
+                <!-- Trust Points -->
+                <div class="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div class="p-4 rounded-xl bg-white border border-gray-200 shadow-sm hover-scale">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <div>
+                                <div class="text-sm font-semibold text-gray-900">官方通道</div>
+                                <div class="text-xs text-gray-600 mt-1">教务处/信息办联合发布</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-4 rounded-xl bg-white border border-gray-200 shadow-sm hover-scale">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            </svg>
+                            <div>
+                                <div class="text-sm font-semibold text-gray-900">费用透明</div>
+                                <div class="text-xs text-gray-600 mt-1">费用项目+上限清晰公示</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-4 rounded-xl bg-white border border-gray-200 shadow-sm hover-scale">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                            <div>
+                                <div class="text-sm font-semibold text-gray-900">数据加密</div>
+                                <div class="text-xs text-gray-600 mt-1">仅用于认证，不对外共享</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-4 rounded-xl bg-white border border-gray-200 shadow-sm hover-scale">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                            </svg>
+                            <div>
+                                <div class="text-sm font-semibold text-gray-900">丢卡秒停用</div>
+                                <div class="text-xs text-gray-600 mt-1">自助挂失，全程留痕</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions Card -->
+            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 h-fit">
+                <div class="text-sm text-gray-500">预计总用时</div>
+                <div class="text-3xl font-bold text-gray-900 mt-1">≈ 10 分钟</div>
+                <ul class="mt-2 text-sm text-gray-600 space-y-1">
+                    <li>• 线上 3–5 分钟</li>
+                    <li>• 现场 5–7 分钟（已分时段）</li>
+                </ul>
+                <a id="book-now" href="#" class="mt-4 w-full block text-center px-4 py-3 rounded-xl bg-blue-900 text-white text-sm hover:bg-blue-800 transition-colors font-medium">
+                    预约办理（示例链接）
+                </a>
+                <p class="mt-2 text-xs text-gray-500">* 实际入口以学校官方通知为准</p>
+                <div class="mt-4 p-3 rounded-xl bg-gray-50 border border-gray-200">
+                    <div class="text-xs font-medium text-gray-700 mb-2">联系方式（示例）</div>
+                    <div class="text-xs text-gray-600 space-y-1">
+                        <div>📞 热线：400-000-0000（9:00–18:00）</div>
+                        <div>📍 网点：信息中心一楼服务台</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <section class="max-w-6xl mx-auto px-4 pb-16">
+        <div class="grid md:grid-cols-5 gap-6">
+            <!-- Steps Navigation -->
+            <aside class="md:col-span-2">
+                <nav class="p-4 rounded-xl bg-white border border-gray-200 shadow-sm">
+                    <div class="space-y-2">
+                        <button onclick="showStep(0)" class="step-btn w-full text-left p-3 rounded-lg border-2 border-blue-900 bg-blue-900 text-white" data-step="0">
+                            <div class="text-sm font-semibold">1. 为什么要办？</div>
+                            <div class="text-xs opacity-80 mt-1">约1分钟</div>
+                        </button>
+                        
+                        <button onclick="showStep(1)" class="step-btn w-full text-left p-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50" data-step="1">
+                            <div class="text-sm font-semibold text-gray-900">2. 准备材料</div>
+                            <div class="text-xs text-gray-500 mt-1">约2分钟</div>
+                        </button>
+                        
+                        <button onclick="showStep(2)" class="step-btn w-full text-left p-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50" data-step="2">
+                            <div class="text-sm font-semibold text-gray-900">3. 线上预约</div>
+                            <div class="text-xs text-gray-500 mt-1">约2分钟</div>
+                        </button>
+                        
+                        <button onclick="showStep(3)" class="step-btn w-full text-left p-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50" data-step="3">
+                            <div class="text-sm font-semibold text-gray-900">4. 现场办理</div>
+                            <div class="text-xs text-gray-500 mt-1">约3分钟</div>
+                        </button>
+                        
+                        <button onclick="showStep(4)" class="step-btn w-full text-left p-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50" data-step="4">
+                            <div class="text-sm font-semibold text-gray-900">5. 激活与绑定</div>
+                            <div class="text-xs text-gray-500 mt-1">约1分钟</div>
+                        </button>
+                        
+                        <button onclick="showStep(5)" class="step-btn w-full text-left p-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50" data-step="5">
+                            <div class="text-sm font-semibold text-gray-900">6. 售后与保障</div>
+                            <div class="text-xs text-gray-500 mt-1">约1分钟</div>
+                        </button>
+                    </div>
+                    <p class="mt-3 text-xs text-gray-500">* 勾选进度会自动保存到本地浏览器</p>
+                </nav>
+            </aside>
+
+            <!-- Step Content -->
+            <main class="md:col-span-3">
+                <!-- Step 1: Why -->
+                <div id="step-0" class="step-content active bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">为什么要办？</h3>
+                            <p class="text-xs text-gray-500 mt-1">预计用时 约1分钟</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="previousStep()" class="px-3 py-1.5 rounded-lg border border-gray-300 text-sm text-gray-700 disabled:opacity-40" disabled>上一步</button>
+                            <button onclick="nextStep()" class="px-3 py-1.5 rounded-lg bg-blue-900 text-white text-sm disabled:opacity-40">下一步</button>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 space-y-2">
+                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
+                            <span class="text-sm text-gray-700">了解校园卡用途：门禁/食堂/图书/洗衣/打印/校车/考试签到</span>
+                        </label>
+                        
+                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
+                            <span class="text-sm text-gray-700">知晓不办理的影响：无法正常进出/消费与借阅不便</span>
+                        </label>
+                        
+                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
+                            <span class="text-sm text-gray-700">确认自愿原则：办理非强制，但强烈建议完成以便校园生活</span>
+                        </label>
+                    </div>
+
+                    <!-- FAQ Section -->
+                    <details class="mt-4 group">
+                        <summary class="cursor-pointer select-none">
+                            <div class="flex items-center gap-2 text-sm font-medium text-gray-900">
+                                <span class="inline-flex w-5 h-5 items-center justify-center rounded-full border border-gray-300">?</span>
+                                我还有顾虑/疑问
+                                <span class="ml-2 text-xs text-gray-500 group-open:hidden">▼</span>
+                                <span class="ml-2 text-xs text-gray-500 hidden group-open:inline">▲</span>
+                            </div>
+                        </summary>
+                        <div class="mt-3 space-y-2">
+                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
+                                <div class="text-sm font-medium text-gray-900">我担心被强制办理。</div>
+                                <div class="text-sm text-gray-700 mt-1">是否办理由你决定；但多数校内服务依赖校园卡，未办理会增加生活成本和时间成本。</div>
+                            </div>
+                            
+                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
+                                <div class="text-sm font-medium text-gray-900">担心隐私泄露。</div>
+                                <div class="text-sm text-gray-700 mt-1">仅采集学籍与身份认证必要信息；数据加密存储，权限可审计，可随时导出/注销卡片。</div>
+                            </div>
+                        </div>
+                    </details>
+
+                    <div class="mt-6 flex flex-wrap gap-3">
+                        <a href="#book-now" class="px-4 py-2 rounded-lg bg-blue-900 text-white text-sm hover:bg-blue-800 transition-colors">按此步骤去预约</a>
+                        <button onclick="resetProgress()" class="px-4 py-2 rounded-lg border border-gray-300 text-sm text-gray-700 hover:bg-gray-50">清空进度</button>
+                    </div>
+                </div>
+
+                <!-- Step 2: Preparation -->
+                <div id="step-1" class="step-content bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">准备材料</h3>
+                            <p class="text-xs text-gray-500 mt-1">预计用时 约2分钟</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="previousStep()" class="px-3 py-1.5 rounded-lg border border-gray-300 text-sm text-gray-700">上一步</button>
+                            <button onclick="nextStep()" class="px-3 py-1.5 rounded-lg bg-blue-900 text-white text-sm">下一步</button>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 space-y-2">
+                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
+                            <span class="text-sm text-gray-700">本人身份证或户口本（原件及照片）</span>
+                        </label>
+                        
+                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
+                            <span class="text-sm text-gray-700">录取通知书或学号/学籍号</span>
+                        </label>
+                        
+                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
+                            <span class="text-sm text-gray-700">一寸免冠证件照（电子版）</span>
+                        </label>
+                        
+                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
+                            <span class="text-sm text-gray-700">备用手机号与常用邮箱</span>
+                        </label>
+                    </div>
+
+                    <details class="mt-4 group">
+                        <summary class="cursor-pointer select-none">
+                            <div class="flex items-center gap-2 text-sm font-medium text-gray-900">
+                                <span class="inline-flex w-5 h-5 items-center justify-center rounded-full border border-gray-300">?</span>
+                                我还有顾虑/疑问
+                                <span class="ml-2 text-xs text-gray-500 group-open:hidden">▼</span>
+                                <span class="ml-2 text-xs text-gray-500 hidden group-open:inline">▲</span>
+                            </div>
+                        </summary>
+                        <div class="mt-3 space-y-2">
+                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
+                                <div class="text-sm font-medium text-gray-900">没有电子证件照？</div>
+                                <div class="text-sm text-gray-700 mt-1">可现场拍照或在自助机拍摄，费用公示后再确认是否使用。</div>
+                            </div>
+                            
+                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
+                                <div class="text-sm font-medium text-gray-900">忘带证件怎么办？</div>
+                                <div class="text-sm text-gray-700 mt-1">可先完成线上填报与预约，到场后由辅导员/学院进行校验。</div>
+                            </div>
+                        </div>
+                    </details>
+
+                    <div class="mt-6 flex flex-wrap gap-3">
+                        <a href="#book-now" class="px-4 py-2 rounded-lg bg-blue-900 text-white text-sm hover:bg-blue-800 transition-colors">按此步骤去预约</a>
+                        <button onclick="resetProgress()" class="px-4 py-2 rounded-lg border border-gray-300 text-sm text-gray-700 hover:bg-gray-50">清空进度</button>
+                    </div>
+                </div>
+
+                <!-- Step 3: Booking -->
+                <div id="step-2" class="step-content bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">线上预约</h3>
+                            <p class="text-xs text-gray-500 mt-1">预计用时 约2分钟</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="previousStep()" class="px-3 py-1.5 rounded-lg border border-gray-300 text-sm text-gray-700">上一步</button>
+                            <button onclick="nextStep()" class="px-3 py-1.5 rounded-lg bg-blue-900 text-white text-sm">下一步</button>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 space-y-2">
+                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
+                            <span class="text-sm text-gray-700">登录新生服务平台或小程序（学校官方入口）</span>
+                        </label>
+                        
+                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
+                            <span class="text-sm text-gray-700">选择"校园卡办理预约"，选取时间与地点</span>
+                        </label>
+                        
+                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
+                            <span class="text-sm text-gray-700">在线阅读并同意《校园卡使用与隐私说明》</span>
+                        </label>
+                    </div>
+
+                    <details class="mt-4 group">
+                        <summary class="cursor-pointer select-none">
+                            <div class="flex items-center gap-2 text-sm font-medium text-gray-900">
+                                <span class="inline-flex w-5 h-5 items-center justify-center rounded-full border border-gray-300">?</span>
+                                我还有顾虑/疑问
+                                <span class="ml-2 text-xs text-gray-500 group-open:hidden">▼</span>
+                                <span class="ml-2 text-xs text-gray-500 hidden group-open:inline">▲</span>
+                            </div>
+                        </summary>
+                        <div class="mt-3 space-y-2">
+                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
+                                <div class="text-sm font-medium text-gray-900">不确定入口是否官方？</div>
+                                <div class="text-sm text-gray-700 mt-1">认准 *.university.edu.cn 或学校认证小程序；不在群聊里点陌生链接。</div>
+                            </div>
+                            
+                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
+                                <div class="text-sm font-medium text-gray-900">担心排队?</div>
+                                <div class="text-sm text-gray-700 mt-1">预约按时间段分流，平均办理用时≈10分钟。</div>
+                            </div>
+                        </div>
+                    </details>
+
+                    <div class="mt-6 flex flex-wrap gap-3">
+                        <a href="#book-now" class="px-4 py-2 rounded-lg bg-blue-900 text-white text-sm hover:bg-blue-800 transition-colors">按此步骤去预约</a>
+                        <button onclick="resetProgress()" class="px-4 py-2 rounded-lg border border-gray-300 text-sm text-gray-700 hover:bg-gray-50">清空进度</button>
+                    </div>
+                </div>
+
+                <!-- Step 4: Onsite -->
+                <div id="step-3" class="step-content bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">现场办理</h3>
+                            <p class="text-xs text-gray-500 mt-1">预计用时 约3分钟</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="previousStep()" class="px-3 py-1.5 rounded-lg border border-gray-300 text-sm text-gray-700">上一步</button>
+                            <button onclick="nextStep()" class="px-3 py-1.5 rounded-lg bg-blue-900 text-white text-sm">下一步</button>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 space-y-2">
+                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
+                            <span class="text-sm text-gray-700">到达服务点 → 出示预约码与身份证件</span>
+                        </label>
+                        
+                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
+                            <span class="text-sm text-gray-700">核验信息 → 拍照/补充资料（如需要）</span>
+                        </label>
+                        
+                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
+                            <span class="text-sm text-gray-700">确认费用清单 → 现场制卡或次日领卡</span>
+                        </label>
+                    </div>
+
+                    <details class="mt-4 group">
+                        <summary class="cursor-pointer select-none">
+                            <div class="flex items-center gap-2 text-sm font-medium text-gray-900">
+                                <span class="inline-flex w-5 h-5 items-center justify-center rounded-full border border-gray-300">?</span>
+                                我还有顾虑/疑问
+                                <span class="ml-2 text-xs text-gray-500 group-open:hidden">▼</span>
+                                <span class="ml-2 text-xs text-gray-500 hidden group-open:inline">▲</span>
+                            </div>
+                        </summary>
+                        <div class="mt-3 space-y-2">
+                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
+                                <div class="text-sm font-medium text-gray-900">一定要当场付款吗？</div>
+                                <div class="text-sm text-gray-700 mt-1">费用以项目为准，可现场或线上缴费；所有收费项现场公示且可开具票据。</div>
+                            </div>
+                            
+                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
+                                <div class="text-sm font-medium text-gray-900">制卡失败怎么办？</div>
+                                <div class="text-sm text-gray-700 mt-1">将提供临时通行二维码与补办窗口，确保当日基本通行。</div>
+                            </div>
+                        </div>
+                    </details>
+
+                    <div class="mt-6 flex flex-wrap gap-3">
+                        <a href="#book-now" class="px-4 py-2 rounded-lg bg-blue-900 text-white text-sm hover:bg-blue-800 transition-colors">按此步骤去预约</a>
+                        <button onclick="resetProgress()" class="px-4 py-2 rounded-lg border border-gray-300 text-sm text-gray-700 hover:bg-gray-50">清空进度</button>
+                    </div>
+                </div>
+
+                <!-- Step 5: Activate -->
+                <div id="step-4" class="step-content bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">激活与绑定</h3>
+                            <p class="text-xs text-gray-500 mt-1">预计用时 约1分钟</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="previousStep()" class="px-3 py-1.5 rounded-lg border border-gray-300 text-sm text-gray-700">上一步</button>
+                            <button onclick="nextStep()" class="px-3 py-1.5 rounded-lg bg-blue-900 text-white text-sm">下一步</button>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 space-y-2">
+                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
+                            <span class="text-sm text-gray-700">下载校园App/登录服务号，绑定学号</span>
+                        </label>
+                        
+                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
+                            <span class="text-sm text-gray-700">设置支付限额与自动挂失开关</span>
+                        </label>
+                        
+                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
+                            <span class="text-sm text-gray-700">为卡片充值（可选，支持家长代充）</span>
+                        </label>
+                    </div>
+
+                    <details class="mt-4 group">
+                        <summary class="cursor-pointer select-none">
+                            <div class="flex items-center gap-2 text-sm font-medium text-gray-900">
+                                <span class="inline-flex w-5 h-5 items-center justify-center rounded-full border border-gray-300">?</span>
+                                我还有顾虑/疑问
+                                <span class="ml-2 text-xs text-gray-500 group-open:hidden">▼</span>
+                                <span class="ml-2 text-xs text-gray-500 hidden group-open:inline">▲</span>
+                            </div>
+                        </summary>
+                        <div class="mt-3 space-y-2">
+                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
+                                <div class="text-sm font-medium text-gray-900">卡丢了怎么办？</div>
+                                <div class="text-sm text-gray-700 mt-1">在App/自助机一键挂失并可临时生成二维码；补卡后原资金自动转入。</div>
+                            </div>
+                            
+                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
+                                <div class="text-sm font-medium text-gray-900">怕被盗刷？</div>
+                                <div class="text-sm text-gray-700 mt-1">可设置每日限额/免密限额，超过需再次验证。</div>
+                            </div>
+                        </div>
+                    </details>
+
+                    <div class="mt-6 flex flex-wrap gap-3">
+                        <a href="#book-now" class="px-4 py-2 rounded-lg bg-blue-900 text-white text-sm hover:bg-blue-800 transition-colors">按此步骤去预约</a>
+                        <button onclick="resetProgress()" class="px-4 py-2 rounded-lg border border-gray-300 text-sm text-gray-700 hover:bg-gray-50">清空进度</button>
+                    </div>
+                </div>
+
+                <!-- Step 6: After Service -->
+                <div id="step-5" class="step-content bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h3 class="text-lg font-bold text-gray-900">售后与保障</h3>
+                            <p class="text-xs text-gray-500 mt-1">预计用时 约1分钟</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="previousStep()" class="px-3 py-1.5 rounded-lg border border-gray-300 text-sm text-gray-700">上一步</button>
+                            <button onclick="nextStep()" class="px-3 py-1.5 rounded-lg bg-blue-900 text-white text-sm disabled:opacity-40" disabled>下一步</button>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 space-y-2">
+                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
+                            <span class="text-sm text-gray-700">了解常见问题与服务时段</span>
+                        </label>
+                        
+                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
+                            <span class="text-sm text-gray-700">保存客服热线与线下网点位置</span>
+                        </label>
+                        
+                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
+                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
+                            <span class="text-sm text-gray-700">关注平台消息：异常交易/余额变动提醒</span>
+                        </label>
+                    </div>
+
+                    <details class="mt-4 group">
+                        <summary class="cursor-pointer select-none">
+                            <div class="flex items-center gap-2 text-sm font-medium text-gray-900">
+                                <span class="inline-flex w-5 h-5 items-center justify-center rounded-full border border-gray-300">?</span>
+                                我还有顾虑/疑问
+                                <span class="ml-2 text-xs text-gray-500 group-open:hidden">▼</span>
+                                <span class="ml-2 text-xs text-gray-500 hidden group-open:inline">▲</span>
+                            </div>
+                        </summary>
+                        <div class="mt-3 space-y-2">
+                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
+                                <div class="text-sm font-medium text-gray-900">能注销或暂停吗？</div>
+                                <div class="text-sm text-gray-700 mt-1">可在毕业/退学/长期离校时申请注销或休眠，余额原路退回。</div>
+                            </div>
+                            
+                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
+                                <div class="text-sm font-medium text-gray-900">能换头像/昵称？</div>
+                                <div class="text-sm text-gray-700 mt-1">可在个人中心更改头像与昵称，不影响身份认证信息。</div>
+                            </div>
+                        </div>
+                    </details>
+
+                    <div class="mt-6 flex flex-wrap gap-3">
+                        <a href="#book-now" class="px-4 py-2 rounded-lg bg-blue-900 text-white text-sm hover:bg-blue-800 transition-colors">按此步骤去预约</a>
+                        <button onclick="resetProgress()" class="px-4 py-2 rounded-lg border border-gray-300 text-sm text-gray-700 hover:bg-gray-50">清空进度</button>
+                    </div>
+                </div>
+            </main>
         </div>
 
-        <div class="instructions">
-            <h3>🎯 游戏说明:</h3>
-            <p>• 点击左移/右移按钮或使用键盘方向键控制大便超人</p>
-            <p>• 点击发射按钮或按空格键发射能量弹</p>
-            <p>• 击败细菌怪物获得分数，收集道具获得奖励</p>
-            <p>• 小心不要被细菌怪物碰到，你只有3条生命！</p>
-            <p>• 每100分升一级，等级越高敌人越多越快！</p>
+        <!-- FAQ Section -->
+        <div class="mt-8 bg-white rounded-xl border border-gray-200 shadow-sm p-5">
+            <div class="flex items-center gap-2 mb-4">
+                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <h4 class="text-base font-bold text-gray-900">常见问题</h4>
+            </div>
+            
+            <div class="space-y-3">
+                <details class="group">
+                    <summary class="cursor-pointer select-none p-3 rounded-lg hover:bg-gray-50">
+                        <div class="text-sm font-medium text-gray-900">校园卡是否强制？</div>
+                    </summary>
+                    <div class="px-3 pb-3 text-sm text-gray-700">
+                        不强制。但多数校内场景依赖校园卡（门禁/消费/借阅），未办理将带来不便。
+                    </div>
+                </details>
+                
+                <details class="group">
+                    <summary class="cursor-pointer select-none p-3 rounded-lg hover:bg-gray-50">
+                        <div class="text-sm font-medium text-gray-900">收费标准？</div>
+                    </summary>
+                    <div class="px-3 pb-3 text-sm text-gray-700">
+                        制作费、工本费、补拍照等项目当场公示；任何非公示收费均可拒绝并投诉。
+                    </div>
+                </details>
+                
+                <details class="group">
+                    <summary class="cursor-pointer select-none p-3 rounded-lg hover:bg-gray-50">
+                        <div class="text-sm font-medium text-gray-900">信息是否只用于校园？</div>
+                    </summary>
+                    <div class="px-3 pb-3 text-sm text-gray-700">
+                        用于身份认证与业务办理，不对外共享；任何超范围使用须再次征得同意。
+                    </div>
+                </details>
+                
+                <details class="group">
+                    <summary class="cursor-pointer select-none p-3 rounded-lg hover:bg-gray-50">
+                        <div class="text-sm font-medium text-gray-900">支持家长代充吗？</div>
+                    </summary>
+                    <div class="px-3 pb-3 text-sm text-gray-700">
+                        支持。可通过学号绑定的充值链接或App完成。
+                    </div>
+                </details>
+                
+                <details class="group">
+                    <summary class="cursor-pointer select-none p-3 rounded-lg hover:bg-gray-50">
+                        <div class="text-sm font-medium text-gray-900">丢卡被人刷怎么办？</div>
+                    </summary>
+                    <div class="px-3 pb-3 text-sm text-gray-700">
+                        设置限额+免密阈值；一键挂失后不再扣费，异常交易可申诉。
+                    </div>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- Privacy Modal -->
+    <div id="privacyModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/40" onclick="hidePrivacy()"></div>
+        <div class="relative z-10 flex items-center justify-center p-4 min-h-screen">
+            <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-6">
+                <button onclick="hidePrivacy()" class="absolute top-4 right-4 p-1 rounded-lg hover:bg-gray-100">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+                
+                <h5 class="text-lg font-bold text-gray-900 mb-4">校园卡使用与隐私说明（摘要）</h5>
+                
+                <ol class="list-decimal list-inside text-sm text-gray-700 space-y-2">
+                    <li>仅收集办理所需的最小信息集；用途限定为身份认证与校内服务。</li>
+                    <li>数据加密存储，访问有审计；你可查询、下载或申请删除个人数据。</li>
+                    <li>费用项目与上限现场公示，拒绝任何未明示收费。</li>
+                    <li>如发生异常交易或丢卡，将提供临时通行与快速止损机制。</li>
+                </ol>
+                
+                <p class="mt-4 text-xs text-gray-500">* 完整条款以学校正式文件为准。</p>
+            </div>
         </div>
     </div>
 
+    <!-- Footer -->
+    <footer class="border-t border-gray-200 bg-white">
+        <div class="max-w-6xl mx-auto px-4 py-8">
+            <p class="text-xs text-gray-500 text-center">
+                © 2025 某某大学 · 信息化建设与管理办公室｜如需对接你校内容，请告知具体政策与入口，我们可替换示例链接与字段。
+            </p>
+        </div>
+    </footer>
+
     <script>
-        let gameState = {
-            score: 0,
-            lives: 3,
-            level: 1,
-            gameRunning: true,
-            heroPosition: 50
-        };
+        let currentStep = 0;
+        const totalSteps = 6;
 
-        let enemies = [];
-        let bullets = [];
-        let powerUps = [];
-        let gameIntervals = [];
-
-        const hero = document.getElementById('hero');
-        const gameArea = document.getElementById('gameArea');
-        const scoreElement = document.getElementById('score');
-        const livesElement = document.getElementById('lives');
-        const levelElement = document.getElementById('level');
-
-        // 键盘控制
-        document.addEventListener('keydown', (e) => {
-            if (!gameState.gameRunning) return;
-            
-            switch(e.code) {
-                case 'ArrowLeft':
-                    e.preventDefault();
-                    moveLeft();
-                    break;
-                case 'ArrowRight':
-                    e.preventDefault();
-                    moveRight();
-                    break;
-                case 'Space':
-                    e.preventDefault();
-                    shoot();
-                    break;
-            }
-        });
-
-        function moveLeft() {
-            if (gameState.heroPosition > 5) {
-                gameState.heroPosition -= 8;
-                updateHeroPosition();
-            }
-        }
-
-        function moveRight() {
-            if (gameState.heroPosition < 95) {
-                gameState.heroPosition += 8;
-                updateHeroPosition();
-            }
-        }
-
-        function updateHeroPosition() {
-            hero.style.left = gameState.heroPosition + '%';
-        }
-
-        function shoot() {
-            const bullet = document.createElement('div');
-            bullet.innerHTML = '⭐';
-            bullet.className = 'bullet';
-            bullet.style.left = gameState.heroPosition + '%';
-            bullet.style.bottom = '80px';
-            bullet.style.zIndex = '5';
-            gameArea.appendChild(bullet);
-            bullets.push(bullet);
-            
-            // 子弹移动动画
-            let bulletPosition = 80;
-            const bulletInterval = setInterval(() => {
-                bulletPosition += 12;
-                bullet.style.bottom = bulletPosition + 'px';
-                
-                if (bulletPosition > 400) {
-                    clearInterval(bulletInterval);
-                    if (bullet.parentNode) {
-                        bullet.remove();
-                    }
-                    bullets = bullets.filter(b => b !== bullet);
-                }
-            }, 30);
-        }
-
-        function createEnemy() {
-            if (!gameState.gameRunning) return;
-            
-            const enemy = document.createElement('div');
-            const enemyTypes = ['🦠', '🧬', '☣️', '🦆', '👾', '🤢'];
-            enemy.innerHTML = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
-            enemy.className = 'character';
-            enemy.style.top = Math.random() * 150 + 20 + 'px';
-            enemy.style.left = '-60px';
-            enemy.style.zIndex = '3';
-            gameArea.appendChild(enemy);
-            enemies.push(enemy);
-
-            // 敌人移动速度根据等级调整
-            const speed = 2 + gameState.level * 0.5;
-            let enemyPosition = -60;
-            const enemyInterval = setInterval(() => {
-                enemyPosition += speed;
-                enemy.style.left = enemyPosition + 'px';
-                
-                if (enemyPosition > 850) {
-                    clearInterval(enemyInterval);
-                    if (enemy.parentNode) {
-                        enemy.remove();
-                    }
-                    enemies = enemies.filter(e => e !== enemy);
-                }
-                
-                // 检查碰撞
-                checkCollisions();
-            }, 50);
-        }
-
-        function createPowerUp() {
-            if (!gameState.gameRunning || Math.random() > 0.4) return;
-            
-            const powerUp = document.createElement('div');
-            const powerUpTypes = ['🌟', '💎', '🍄', '⚡', '🎁', '🔋'];
-            powerUp.innerHTML = powerUpTypes[Math.floor(Math.random() * powerUpTypes.length)];
-            powerUp.className = 'power-up';
-            powerUp.style.top = Math.random() * 250 + 50 + 'px';
-            powerUp.style.left = Math.random() * 600 + 100 + 'px';
-            powerUp.style.zIndex = '4';
-            gameArea.appendChild(powerUp);
-            powerUps.push(powerUp);
-            
-            // 道具自动消失
-            setTimeout(() => {
-                if (powerUp.parentNode) {
-                    powerUp.remove();
-                }
-                powerUps = powerUps.filter(p => p !== powerUp);
-            }, 8000);
-        }
-
-        function checkCollisions() {
-            // 检查子弹与敌人碰撞
-            bullets.forEach((bullet, bulletIndex) => {
-                enemies.forEach((enemy, enemyIndex) => {
-                    if (isColliding(bullet, enemy)) {
-                        // 创建爆炸效果
-                        createExplosion(enemy);
-                        
-                        // 移除子弹和敌人
-                        if (bullet.parentNode) bullet.remove();
-                        if (enemy.parentNode) enemy.remove();
-                        
-                        bullets = bullets.filter(b => b !== bullet);
-                        enemies = enemies.filter(e => e !== enemy);
-                        
-                        // 增加分数
-                        gameState.score += 15;
-                        updateScore();
-                    }
+        // Initialize progress from localStorage
+        function initProgress() {
+            const saved = localStorage.getItem('campusCardProgress');
+            if (saved) {
+                const checks = JSON.parse(saved);
+                Object.keys(checks).forEach(stepKey => {
+                    const stepIndex = parseInt(stepKey.replace('step', ''));
+                    const checkboxes = document.querySelectorAll(`#step-${stepIndex} input[type="checkbox"]`);
+                    checkboxes.forEach((cb, index) => {
+                        if (checks[stepKey][index]) {
+                            cb.checked = true;
+                        }
+                    });
                 });
-            });
-
-            // 检查英雄与敌人碰撞
-            enemies.forEach((enemy, enemyIndex) => {
-                if (isColliding(hero, enemy)) {
-                    // 创建碰撞效果
-                    createExplosion(hero);
-                    
-                    // 减少生命
-                    gameState.lives--;
-                    updateLives();
-                    
-                    // 移除敌人
-                    if (enemy.parentNode) enemy.remove();
-                    enemies = enemies.filter(e => e !== enemy);
-                    
-                    // 英雄闪烁效果
-                    hero.style.opacity = '0.5';
-                    setTimeout(() => {
-                        hero.style.opacity = '1';
-                    }, 1000);
-                    
-                    if (gameState.lives <= 0) {
-                        gameOver();
-                    }
-                }
-            });
-
-            // 检查英雄与道具碰撞
-            powerUps.forEach((powerUp, powerUpIndex) => {
-                if (isColliding(hero, powerUp)) {
-                    // 根据道具类型给不同奖励
-                    const powerUpType = powerUp.innerHTML;
-                    let bonus = 50;
-                    
-                    switch(powerUpType) {
-                        case '💎': bonus = 100; break;
-                        case '🌟': bonus = 75; break;
-                        case '⚡': bonus = 60; break;
-                        case '🎁': bonus = 150; break;
-                        default: bonus = 50;
-                    }
-                    
-                    gameState.score += bonus;
-                    updateScore();
-                    
-                    // 创建收集效果
-                    createCollectEffect(powerUp);
-                    
-                    if (powerUp.parentNode) powerUp.remove();
-                    powerUps = powerUps.filter(p => p !== powerUp);
-                }
-            });
-        }
-
-        function isColliding(elem1, elem2) {
-            const rect1 = elem1.getBoundingClientRect();
-            const rect2 = elem2.getBoundingClientRect();
-            
-            const threshold = 20; // 碰撞检测阈值，让游戏更容易一些
-            
-            return !(rect1.right < rect2.left + threshold || 
-                     rect1.left > rect2.right - threshold || 
-                     rect1.bottom < rect2.top + threshold || 
-                     rect1.top > rect2.bottom - threshold);
-        }
-
-        function createExplosion(element) {
-            const explosion = document.createElement('div');
-            explosion.innerHTML = '💥';
-            explosion.className = 'explosion';
-            explosion.style.left = element.style.left;
-            explosion.style.top = element.style.top;
-            explosion.style.zIndex = '10';
-            gameArea.appendChild(explosion);
-            
-            setTimeout(() => {
-                if (explosion.parentNode) {
-                    explosion.remove();
-                }
-            }, 500);
-        }
-
-        function createCollectEffect(element) {
-            const effect = document.createElement('div');
-            effect.innerHTML = '✨';
-            effect.className = 'explosion';
-            effect.style.left = element.style.left;
-            effect.style.top = element.style.top;
-            effect.style.color = '#FFD700';
-            effect.style.zIndex = '10';
-            gameArea.appendChild(effect);
-            
-            setTimeout(() => {
-                if (effect.parentNode) {
-                    effect.remove();
-                }
-            }, 500);
-        }
-
-        function updateScore() {
-            scoreElement.textContent = gameState.score;
-            
-            // 检查升级
-            const newLevel = Math.floor(gameState.score / 150) + 1;
-            if (newLevel > gameState.level) {
-                gameState.level = newLevel;
-                levelElement.textContent = gameState.level;
-                
-                // 升级特效
-                hero.style.transform = 'translateX(-50%) scale(1.3)';
-                setTimeout(() => {
-                    hero.style.transform = 'translateX(-50%) scale(1)';
-                }, 300);
+                updateProgress();
             }
         }
 
-        function updateLives() {
-            const hearts = '❤️'.repeat(Math.max(0, gameState.lives));
-            const brokenHearts = '💔'.repeat(Math.max(0, 3 - gameState.lives));
-            livesElement.textContent = hearts + brokenHearts;
+        // Save progress to localStorage
+        function saveProgress() {
+            const progress = {};
+            for (let i = 0; i < totalSteps; i++) {
+                const checkboxes = document.querySelectorAll(`#step-${i} input[type="checkbox"]`);
+                progress[`step${i}`] = Array.from(checkboxes).map(cb => cb.checked);
+            }
+            localStorage.setItem('campusCardProgress', JSON.stringify(progress));
         }
 
-        function gameOver() {
-            gameState.gameRunning = false;
+        // Update progress bar
+        function updateProgress() {
+            saveProgress();
             
-            // 清除所有定时器
-            gameIntervals.forEach(interval => clearInterval(interval));
-            gameIntervals = [];
+            let total = 0;
+            let checked = 0;
             
-            document.getElementById('finalScore').textContent = gameState.score;
-            document.getElementById('finalLevel').textContent = gameState.level;
-            document.getElementById('gameOver').style.display = 'block';
+            for (let i = 0; i < totalSteps; i++) {
+                const checkboxes = document.querySelectorAll(`#step-${i} input[type="checkbox"]`);
+                total += checkboxes.length;
+                checked += Array.from(checkboxes).filter(cb => cb.checked).length;
+            }
+            
+            const percent = Math.round((checked / total) * 100);
+            document.getElementById('progressBar').style.width = `${percent}%`;
+            document.getElementById('progressText').textContent = `完成度 ${percent}%`;
         }
 
-        function restartGame() {
-            // 清除所有定时器
-            gameIntervals.forEach(interval => clearInterval(interval));
-            gameIntervals = [];
-            
-            // 重置游戏状态
-            gameState = {
-                score: 0,
-                lives: 3,
-                level: 1,
-                gameRunning: true,
-                heroPosition: 50
-            };
-            
-            // 清除所有游戏元素
-            [...enemies, ...bullets, ...powerUps].forEach(element => {
-                if (element.parentNode) element.remove();
+        // Show specific step
+        function showStep(step) {
+            // Hide all steps
+            document.querySelectorAll('.step-content').forEach(el => {
+                el.classList.remove('active');
             });
             
-            // 清除爆炸效果
-            const explosions = gameArea.querySelectorAll('.explosion');
-            explosions.forEach(explosion => explosion.remove());
+            // Show selected step
+            document.getElementById(`step-${step}`).classList.add('active');
             
-            enemies = [];
-            bullets = [];
-            powerUps = [];
+            // Update navigation buttons
+            document.querySelectorAll('.step-btn').forEach((btn, index) => {
+                if (index === step) {
+                    btn.className = 'step-btn w-full text-left p-3 rounded-lg border-2 border-blue-900 bg-blue-900 text-white';
+                } else {
+                    btn.className = 'step-btn w-full text-left p-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50';
+                }
+            });
             
-            // 重置英雄样式
-            hero.style.opacity = '1';
-            hero.style.transform = 'translateX(-50%) scale(1)';
+            currentStep = step;
             
-            // 更新显示
-            updateScore();
-            updateLives();
-            updateHeroPosition();
+            // Update next/prev button states
+            const prevBtn = document.querySelector('#step-' + step + ' button[onclick="previousStep()"]');
+            const nextBtn = document.querySelector('#step-' + step + ' button[onclick="nextStep()"]');
             
-            // 隐藏游戏结束界面
-            document.getElementById('gameOver').style.display = 'none';
-            
-            // 重新开始游戏循环
-            startGame();
+            if (prevBtn) prevBtn.disabled = step === 0;
+            if (nextBtn) nextBtn.disabled = step === totalSteps - 1;
         }
 
-        function startGame() {
-            if (!gameState.gameRunning) return;
-            
-            // 创建敌人 - 频率根据等级调整
-            const enemyInterval = setInterval(() => {
-                if (gameState.gameRunning) {
-                    createEnemy();
-                }
-            }, Math.max(1000, 2500 - gameState.level * 200));
-            gameIntervals.push(enemyInterval);
-            
-            // 创建道具
-            const powerUpInterval = setInterval(() => {
-                if (gameState.gameRunning) {
-                    createPowerUp();
-                }
-            }, 4000);
-            gameIntervals.push(powerUpInterval);
+        // Next step
+        function nextStep() {
+            if (currentStep < totalSteps - 1) {
+                showStep(currentStep + 1);
+            }
         }
 
-        // 页面加载完成后初始化游戏
-        window.addEventListener('load', () => {
-            updateHeroPosition();
-            updateScore();
-            updateLives();
-            startGame();
-        });
+        // Previous step
+        function previousStep() {
+            if (currentStep > 0) {
+                showStep(currentStep - 1);
+            }
+        }
 
-        // 防止页面刷新时丢失焦点
-        window.addEventListener('beforeunload', () => {
-            gameIntervals.forEach(interval => clearInterval(interval));
+        // Reset progress
+        function resetProgress() {
+            if (confirm('确定要清空所有进度吗？')) {
+                localStorage.removeItem('campusCardProgress');
+                document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                    cb.checked = false;
+                });
+                updateProgress();
+            }
+        }
+
+        // Show privacy modal
+        function showPrivacy() {
+            document.getElementById('privacyModal').classList.remove('hidden');
+        }
+
+        // Hide privacy modal
+        function hidePrivacy() {
+            document.getElementById('privacyModal').classList.add('hidden');
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initProgress();
         });
     </script>
 </body>
