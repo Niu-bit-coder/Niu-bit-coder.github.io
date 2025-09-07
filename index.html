@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大便超人大冒险</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #87CEEB, #98FB98);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            text-align: center;
+            margin: 20px 0;
+            color: #8B4513;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+
+        .game-container {
+            background: #fff;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 800px;
+            width: 90%;
+        }
+
+        .game-area {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(to bottom, #87CEEB 0%, #90EE90 100%);
+            border: 3px solid #8B4513;
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+            cursor: crosshair;
+        }
+
+        .character {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            font-size: 50px;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .poop-hero {
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        .enemy {
+            top: 20px;
+            animation: moveEnemy 3s linear infinite;
+        }
+
+        @keyframes moveEnemy {
+            0% { left: -60px; }
+            100% { left: 100%; }
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #8B4513;
+        }
+
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .btn {
+            background: #FF6B6B;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            background: #FF5252;
+            transform: translateY(-2px);
+        }
+
+        .instructions {
+            background: #FFF8DC;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #FF6B6B;
+        }
+
+        .power-up {
+            position: absolute;
+            font-size: 30px;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .explosion {
+            position: absolute;
+            font-size: 40px;
+            animation: explode 0.5s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes explode {
+            0% { transform: scale(0) rotate(0deg); opacity: 1; }
+            100% { transform: scale(2) rotate(360deg); opacity: 0; }
+        }
+
+        .game-over {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: none;
+            z-index: 100;
+        }
+
+        .bullet {
+            position: absolute;
+            font-size: 25px;
+            z-index: 5;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 1em;
+                margin: 5px;
+            }
+            
+            .game-area {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🦸‍♂️💩 大便超人大冒险 💩🦸‍♂️</h1>
+        <p>帮助大便超人保护城市，击败邪恶的细菌怪物！</p>
+    </div>
+
+    <div class="game-container">
+        <div class="score-board">
+            <div>得分: <span id="score">0</span></div>
+            <div>生命: <span id="lives">❤️❤️❤️</span></div>
+            <div>等级: <span id="level">1</span></div>
+        </div>
+
+        <div class="game-area" id="gameArea">
+            <div class="character poop-hero" id="hero">💩</div>
+            <div class="game-over" id="gameOver">
+                <h2>🎮 游戏结束！</h2>
+                <p>你的最终得分: <span id="finalScore">0</span></p>
+                <p>大便超人等级: <span id="finalLevel">1</span></p>
+                <button class="btn" onclick="restartGame()">🔄 重新开始</button>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" onclick="moveLeft()">⬅️ 左移</button>
+            <button class="btn" onclick="shoot()">🚀 发射</button>
+            <button class="btn" onclick="moveRight()">➡️ 右移</button>
+        </div>
+
+        <div class="instructions">
+            <h3>🎯 游戏说明:</h3>
+            <p>• 点击左移/右移按钮或使用键盘方向键控制大便超人</p>
+            <p>• 点击发射按钮或按空格键发射能量弹</p>
+            <p>• 击败细菌怪物获得分数，收集道具获得奖励</p>
+            <p>• 小心不要被细菌怪物碰到，你只有3条生命！</p>
+            <p>• 每100分升一级，等级越高敌人越多越快！</p>
+        </div>
+    </div>
+
+    <script>
+        let gameState = {
+            score: 0,
+            lives: 3,
+            level: 1,
+            gameRunning: true,
+            heroPosition: 50
+        };
+
+        let enemies = [];
+        let bullets = [];
+        let powerUps = [];
+        let gameIntervals = [];
+
+        const hero = document.getElementById('hero');
+        const gameArea = document.getElementById('gameArea');
+        const scoreElement = document.getElementById('score');
+        const livesElement = document.getElementById('lives');
+        const levelElement = document.getElementById('level');
+
+        // 键盘控制
+        document.addEventListener('keydown', (e) => {
+            if (!gameState.gameRunning) return;
+            
+            switch(e.code) {
+                case 'ArrowLeft':
+                    e.preventDefault();
+                    moveLeft();
+                    break;
+                case 'ArrowRight':
+                    e.preventDefault();
+                    moveRight();
+                    break;
+                case 'Space':
+                    e.preventDefault();
+                    shoot();
+                    break;
+            }
+        });
+
+        function moveLeft() {
+            if (gameState.heroPosition > 5) {
+                gameState.heroPosition -= 8;
+                updateHeroPosition();
+            }
+        }
+
+        function moveRight() {
+            if (gameState.heroPosition < 95) {
+                gameState.heroPosition += 8;
+                updateHeroPosition();
+            }
+        }
+
+        function updateHeroPosition() {
+            hero.style.left = gameState.heroPosition + '%';
+        }
+
+        function shoot() {
+            const bullet = document.createElement('div');
+            bullet.innerHTML = '⭐';
+            bullet.className = 'bullet';
+            bullet.style.left = gameState.heroPosition + '%';
+            bullet.style.bottom = '80px';
+            bullet.style.zIndex = '5';
+            gameArea.appendChild(bullet);
+            bullets.push(bullet);
+            
+            // 子弹移动动画
+            let bulletPosition = 80;
+            const bulletInterval = setInterval(() => {
+                bulletPosition += 12;
+                bullet.style.bottom = bulletPosition + 'px';
+                
+                if (bulletPosition > 400) {
+                    clearInterval(bulletInterval);
+                    if (bullet.parentNode) {
+                        bullet.remove();
+                    }
+                    bullets = bullets.filter(b => b !== bullet);
+                }
+            }, 30);
+        }
+
+        function createEnemy() {
+            if (!gameState.gameRunning) return;
+            
+            const enemy = document.createElement('div');
+            const enemyTypes = ['🦠', '🧬', '☣️', '🦆', '👾', '🤢'];
+            enemy.innerHTML = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
+            enemy.className = 'character';
+            enemy.style.top = Math.random() * 150 + 20 + 'px';
+            enemy.style.left = '-60px';
+            enemy.style.zIndex = '3';
+            gameArea.appendChild(enemy);
+            enemies.push(enemy);
+
+            // 敌人移动速度根据等级调整
+            const speed = 2 + gameState.level * 0.5;
+            let enemyPosition = -60;
+            const enemyInterval = setInterval(() => {
+                enemyPosition += speed;
+                enemy.style.left = enemyPosition + 'px';
+                
+                if (enemyPosition > 850) {
+                    clearInterval(enemyInterval);
+                    if (enemy.parentNode) {
+                        enemy.remove();
+                    }
+                    enemies = enemies.filter(e => e !== enemy);
+                }
+                
+                // 检查碰撞
+                checkCollisions();
+            }, 50);
+        }
+
+        function createPowerUp() {
+            if (!gameState.gameRunning || Math.random() > 0.4) return;
+            
+            const powerUp = document.createElement('div');
+            const powerUpTypes = ['🌟', '💎', '🍄', '⚡', '🎁', '🔋'];
+            powerUp.innerHTML = powerUpTypes[Math.floor(Math.random() * powerUpTypes.length)];
+            powerUp.className = 'power-up';
+            powerUp.style.top = Math.random() * 250 + 50 + 'px';
+            powerUp.style.left = Math.random() * 600 + 100 + 'px';
+            powerUp.style.zIndex = '4';
+            gameArea.appendChild(powerUp);
+            powerUps.push(powerUp);
+            
+            // 道具自动消失
+            setTimeout(() => {
+                if (powerUp.parentNode) {
+                    powerUp.remove();
+                }
+                powerUps = powerUps.filter(p => p !== powerUp);
+            }, 8000);
+        }
+
+        function checkCollisions() {
+            // 检查子弹与敌人碰撞
+            bullets.forEach((bullet, bulletIndex) => {
+                enemies.forEach((enemy, enemyIndex) => {
+                    if (isColliding(bullet, enemy)) {
+                        // 创建爆炸效果
+                        createExplosion(enemy);
+                        
+                        // 移除子弹和敌人
+                        if (bullet.parentNode) bullet.remove();
+                        if (enemy.parentNode) enemy.remove();
+                        
+                        bullets = bullets.filter(b => b !== bullet);
+                        enemies = enemies.filter(e => e !== enemy);
+                        
+                        // 增加分数
+                        gameState.score += 15;
+                        updateScore();
+                    }
+                });
+            });
+
+            // 检查英雄与敌人碰撞
+            enemies.forEach((enemy, enemyIndex) => {
+                if (isColliding(hero, enemy)) {
+                    // 创建碰撞效果
+                    createExplosion(hero);
+                    
+                    // 减少生命
+                    gameState.lives--;
+                    updateLives();
+                    
+                    // 移除敌人
+                    if (enemy.parentNode) enemy.remove();
+                    enemies = enemies.filter(e => e !== enemy);
+                    
+                    // 英雄闪烁效果
+                    hero.style.opacity = '0.5';
+                    setTimeout(() => {
+                        hero.style.opacity = '1';
+                    }, 1000);
+                    
+                    if (gameState.lives <= 0) {
+                        gameOver();
+                    }
+                }
+            });
+
+            // 检查英雄与道具碰撞
+            powerUps.forEach((powerUp, powerUpIndex) => {
+                if (isColliding(hero, powerUp)) {
+                    // 根据道具类型给不同奖励
+                    const powerUpType = powerUp.innerHTML;
+                    let bonus = 50;
+                    
+                    switch(powerUpType) {
+                        case '💎': bonus = 100; break;
+                        case '🌟': bonus = 75; break;
+                        case '⚡': bonus = 60; break;
+                        case '🎁': bonus = 150; break;
+                        default: bonus = 50;
+                    }
+                    
+                    gameState.score += bonus;
+                    updateScore();
+                    
+                    // 创建收集效果
+                    createCollectEffect(powerUp);
+                    
+                    if (powerUp.parentNode) powerUp.remove();
+                    powerUps = powerUps.filter(p => p !== powerUp);
+                }
+            });
+        }
+
+        function isColliding(elem1, elem2) {
+            const rect1 = elem1.getBoundingClientRect();
+            const rect2 = elem2.getBoundingClientRect();
+            
+            const threshold = 20; // 碰撞检测阈值，让游戏更容易一些
+            
+            return !(rect1.right < rect2.left + threshold || 
+                     rect1.left > rect2.right - threshold || 
+                     rect1.bottom < rect2.top + threshold || 
+                     rect1.top > rect2.bottom - threshold);
+        }
+
+        function createExplosion(element) {
+            const explosion = document.createElement('div');
+            explosion.innerHTML = '💥';
+            explosion.className = 'explosion';
+            explosion.style.left = element.style.left;
+            explosion.style.top = element.style.top;
+            explosion.style.zIndex = '10';
+            gameArea.appendChild(explosion);
+            
+            setTimeout(() => {
+                if (explosion.parentNode) {
+                    explosion.remove();
+                }
+            }, 500);
+        }
+
+        function createCollectEffect(element) {
+            const effect = document.createElement('div');
+            effect.innerHTML = '✨';
+            effect.className = 'explosion';
+            effect.style.left = element.style.left;
+            effect.style.top = element.style.top;
+            effect.style.color = '#FFD700';
+            effect.style.zIndex = '10';
+            gameArea.appendChild(effect);
+            
+            setTimeout(() => {
+                if (effect.parentNode) {
+                    effect.remove();
+                }
+            }, 500);
+        }
+
+        function updateScore() {
+            scoreElement.textContent = gameState.score;
+            
+            // 检查升级
+            const newLevel = Math.floor(gameState.score / 150) + 1;
+            if (newLevel > gameState.level) {
+                gameState.level = newLevel;
+                levelElement.textContent = gameState.level;
+                
+                // 升级特效
+                hero.style.transform = 'translateX(-50%) scale(1.3)';
+                setTimeout(() => {
+                    hero.style.transform = 'translateX(-50%) scale(1)';
+                }, 300);
+            }
+        }
+
+        function updateLives() {
+            const hearts = '❤️'.repeat(Math.max(0, gameState.lives));
+            const brokenHearts = '💔'.repeat(Math.max(0, 3 - gameState.lives));
+            livesElement.textContent = hearts + brokenHearts;
+        }
+
+        function gameOver() {
+            gameState.gameRunning = false;
+            
+            // 清除所有定时器
+            gameIntervals.forEach(interval => clearInterval(interval));
+            gameIntervals = [];
+            
+            document.getElementById('finalScore').textContent = gameState.score;
+            document.getElementById('finalLevel').textContent = gameState.level;
+            document.getElementById('gameOver').style.display = 'block';
+        }
+
+        function restartGame() {
+            // 清除所有定时器
+            gameIntervals.forEach(interval => clearInterval(interval));
+            gameIntervals = [];
+            
+            // 重置游戏状态
+            gameState = {
+                score: 0,
+                lives: 3,
+                level: 1,
+                gameRunning: true,
+                heroPosition: 50
+            };
+            
+            // 清除所有游戏元素
+            [...enemies, ...bullets, ...powerUps].forEach(element => {
+                if (element.parentNode) element.remove();
+            });
+            
+            // 清除爆炸效果
+            const explosions = gameArea.querySelectorAll('.explosion');
+            explosions.forEach(explosion => explosion.remove());
+            
+            enemies = [];
+            bullets = [];
+            powerUps = [];
+            
+            // 重置英雄样式
+            hero.style.opacity = '1';
+            hero.style.transform = 'translateX(-50%) scale(1)';
+            
+            // 更新显示
+            updateScore();
+            updateLives();
+            updateHeroPosition();
+            
+            // 隐藏游戏结束界面
+            document.getElementById('gameOver').style.display = 'none';
+            
+            // 重新开始游戏循环
+            startGame();
+        }
+
+        function startGame() {
+            if (!gameState.gameRunning) return;
+            
+            // 创建敌人 - 频率根据等级调整
+            const enemyInterval = setInterval(() => {
+                if (gameState.gameRunning) {
+                    createEnemy();
+                }
+            }, Math.max(1000, 2500 - gameState.level * 200));
+            gameIntervals.push(enemyInterval);
+            
+            // 创建道具
+            const powerUpInterval = setInterval(() => {
+                if (gameState.gameRunning) {
+                    createPowerUp();
+                }
+            }, 4000);
+            gameIntervals.push(powerUpInterval);
+        }
+
+        // 页面加载完成后初始化游戏
+        window.addEventListener('load', () => {
+            updateHeroPosition();
+            updateScore();
+            updateLives();
+            startGame();
+        });
+
+        // 防止页面刷新时丢失焦点
+        window.addEventListener('beforeunload', () => {
+            gameIntervals.forEach(interval => clearInterval(interval));
+        });
+    </script>
+</body>
+</html>
