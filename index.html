@@ -3,750 +3,938 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>校园卡办理 · 官方指引 - 河南</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>JLPT N2 完整学习打卡系统</title>
     <style>
-        .step-content { display: none; }
-        .step-content.active { display: block; }
-        .progress-fill {
-            transition: width 0.3s ease;
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
         }
-        .hover-scale {
-            transition: transform 0.2s ease;
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
-        .hover-scale:hover {
-            transform: scale(1.02);
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .countdown {
+            background: linear-gradient(45deg, #ff6b6b, #ffa500);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+
+        .daily-goals {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            margin-bottom: 30px;
+        }
+        .goals-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .goal-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #dee2e6;
+            text-align: center;
+        }
+        .goal-input {
+            width: 60px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 5px;
+        }
+        .goal-status {
+            margin-top: 10px;
+            padding: 5px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .goal-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        .goal-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+        .section h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        .timer-display {
+            font-size: 3em;
+            color: #667eea;
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .study-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .tab {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1em;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #495057;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #dee2e6;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .form-group textarea {
+            height: 80px;
+            resize: vertical;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid #dee2e6;
+        }
+        .stat-number {
+            font-size: 2em;
+            color: #667eea;
+            font-weight: bold;
+            display: block;
+        }
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .record-list {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        .record-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .record-item.vocabulary {
+            border-left-color: #48bb78;
+        }
+        .record-item.reading {
+            border-left-color: #667eea;
+        }
+        .record-item.listening {
+            border-left-color: #f56565;
+        }
+        .record-date {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+
+        .ai-chat {
+            background: #f0f8ff;
+            border: 2px solid #b0d4ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .chat-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .chat-response {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border-left: 4px solid #667eea;
+            min-height: 100px;
+        }
+
+        @media (max-width: 768px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .goals-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
-<body class="bg-gray-50">
-    <!-- Header -->
-    <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-gray-200">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-blue-900 text-white flex items-center justify-center font-bold text-lg">
-                    卡
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold text-gray-900">校园卡办理 · 官方指引</h1>
-                    <p class="text-xs text-gray-500">10 分钟完成｜流程透明｜隐私受保护</p>
-                </div>
-            </div>
-            <div class="hidden md:flex items-center gap-4">
-                <button onclick="showPrivacy()" class="text-sm text-gray-600 hover:text-gray-900 underline underline-offset-4">
-                    隐私说明
-                </button>
-                <a href="#book-now" class="px-4 py-2 rounded-xl bg-blue-900 text-white text-sm hover:bg-blue-800 transition-colors">
-                    立即预约办理
-                </a>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>JLPT N2 完整学习打卡系统</h1>
+            <div class="countdown">
+                <strong>距离N2考试还有：<span id="daysLeft">60</span> 天</strong>
             </div>
         </div>
-    </header>
 
-    <!-- Hero Section -->
-    <section class="max-w-6xl mx-auto px-4 pt-8 pb-6">
-        <div class="grid md:grid-cols-3 gap-6">
-            <div class="md:col-span-2">
-                <h2 class="text-2xl md:text-3xl font-bold text-gray-900 leading-tight">
-                    面向大一新生的<span class="px-2 py-1 rounded-xl bg-yellow-100 ml-2">可信</span>办理指南
-                </h2>
-                <p class="mt-3 text-gray-600">
-                    我们理解你对个人信息与收费的顾虑。这份页面把每一步会发生什么、需要花多久、会花多少钱、如何止损
-                    都讲清楚了。你可以边看边打勾，进度会自动保存。
-                </p>
-                
-                <!-- Progress Bar -->
-                <div class="mt-4 flex items-center gap-3">
-                    <div class="flex-1 h-3 bg-gray-200 rounded-full overflow-hidden">
-                        <div id="progressBar" class="h-full bg-blue-900 progress-fill" style="width: 0%"></div>
-                    </div>
-                    <span id="progressText" class="text-sm text-gray-600">完成度 0%</span>
+        <!-- AI学习助手 -->
+        <div class="ai-chat">
+            <h2>日语学习AI助手</h2>
+            <p>有任何日语学习问题都可以问我！比如：词汇解释、语法疑难、学习建议等</p>
+            <input type="text" id="chatInput" class="chat-input" placeholder="输入您的日语学习问题..." />
+            <button class="btn btn-primary" onclick="askAI()">询问AI</button>
+            <div class="chat-response" id="chatResponse">AI助手准备就绪，随时为您解答日语学习问题！</div>
+        </div>
+
+        <!-- 今日学习目标 -->
+        <div class="daily-goals">
+            <h2>今日学习目标设定</h2>
+            <div class="goals-grid">
+                <div class="goal-card">
+                    <h4>学习时长</h4>
+                    <input type="number" id="timeGoal" class="goal-input" value="3" min="1" max="12"> 小时
+                    <div class="goal-status goal-pending" id="timeStatus">未完成</div>
                 </div>
+                <div class="goal-card">
+                    <h4>新学词汇</h4>
+                    <input type="number" id="vocabGoal" class="goal-input" value="30" min="0"> 个
+                    <div class="goal-status goal-pending" id="vocabStatus">未完成</div>
+                </div>
+                <div class="goal-card">
+                    <h4>阅读练习</h4>
+                    <input type="number" id="readingGoal" class="goal-input" value="2" min="0"> 篇
+                    <div class="goal-status goal-pending" id="readingStatus">未完成</div>
+                </div>
+                <div class="goal-card">
+                    <h4>听力训练</h4>
+                    <input type="number" id="listeningGoal" class="goal-input" value="30" min="0"> 分钟
+                    <div class="goal-status goal-pending" id="listeningStatus">未完成</div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 15px;">
+                <button class="btn btn-success" onclick="updateDailyGoals()">更新今日目标</button>
+            </div>
+        </div>
 
-                <!-- Trust Points -->
-                <div class="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-3">
-                    <div class="p-4 rounded-xl bg-white border border-gray-200 shadow-sm hover-scale">
-                        <div class="flex items-start gap-3">
-                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                            </svg>
-                            <div>
-                                <div class="text-sm font-semibold text-gray-900">官方通道</div>
-                                <div class="text-xs text-gray-600 mt-1">教务处/信息办联合发布</div>
-                            </div>
-                        </div>
+        <div class="main-grid">
+            <!-- 学习计时器 -->
+            <div class="section">
+                <h2>学习计时器</h2>
+                <div class="timer-display" id="timer">00:00:00</div>
+                <div style="text-align: center;">
+                    <button class="btn btn-primary" onclick="startTimer()">开始学习</button>
+                    <button class="btn btn-secondary" onclick="pauseTimer()">暂停</button>
+                    <button class="btn btn-secondary" onclick="stopTimer()">结束</button>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number" id="todayHours">0</span>
+                        <div class="stat-label">今日学习(小时)</div>
                     </div>
-                    
-                    <div class="p-4 rounded-xl bg-white border border-gray-200 shadow-sm hover-scale">
-                        <div class="flex items-start gap-3">
-                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                            </svg>
-                            <div>
-                                <div class="text-sm font-semibold text-gray-900">费用透明</div>
-                                <div class="text-xs text-gray-600 mt-1">费用项目+上限清晰公示</div>
-                            </div>
-                        </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="totalHours">0</span>
+                        <div class="stat-label">累计学习(小时)</div>
                     </div>
-                    
-                    <div class="p-4 rounded-xl bg-white border border-gray-200 shadow-sm hover-scale">
-                        <div class="flex items-start gap-3">
-                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                            </svg>
-                            <div>
-                                <div class="text-sm font-semibold text-gray-900">数据加密</div>
-                                <div class="text-xs text-gray-600 mt-1">仅用于认证，不对外共享</div>
-                            </div>
-                        </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="streakDays">0</span>
+                        <div class="stat-label">连续天数</div>
                     </div>
-                    
-                    <div class="p-4 rounded-xl bg-white border border-gray-200 shadow-sm hover-scale">
-                        <div class="flex items-start gap-3">
-                            <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                            </svg>
-                            <div>
-                                <div class="text-sm font-semibold text-gray-900">丢卡秒停用</div>
-                                <div class="text-xs text-gray-600 mt-1">自助挂失，全程留痕</div>
-                            </div>
-                        </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="avgDaily">0</span>
+                        <div class="stat-label">日均学习(小时)</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Quick Actions Card -->
-            <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-5 h-fit">
-                <div class="text-sm text-gray-500">预计总用时</div>
-                <div class="text-3xl font-bold text-gray-900 mt-1">≈ 10 分钟</div>
-                <ul class="mt-2 text-sm text-gray-600 space-y-1">
-                    <li>• 线上 3–5 分钟</li>
-                    <li>• 现场 5–7 分钟（已分时段）</li>
-                </ul>
-                <a id="book-now" href="#" class="mt-4 w-full block text-center px-4 py-3 rounded-xl bg-blue-900 text-white text-sm hover:bg-blue-800 transition-colors font-medium">
-                    预约办理（示例链接）
-                </a>
-                <p class="mt-2 text-xs text-gray-500">* 实际入口以学校官方通知为准</p>
-                <div class="mt-4 p-3 rounded-xl bg-gray-50 border border-gray-200">
-                    <div class="text-xs font-medium text-gray-700 mb-2">联系方式（示例）</div>
-                    <div class="text-xs text-gray-600 space-y-1">
-                        <div>📞 热线：400-000-0000（9:00–18:00）</div>
-                        <div>📍 网点：信息中心一楼服务台</div>
+            <!-- N2分项学习打卡 -->
+            <div class="section">
+                <h2>N2 分项学习打卡</h2>
+                <div class="study-tabs">
+                    <button class="tab active" onclick="switchTab('vocabulary')">语言知识</button>
+                    <button class="tab" onclick="switchTab('reading')">阅读理解</button>
+                    <button class="tab" onclick="switchTab('listening')">听力理解</button>
+                </div>
+
+                <!-- 语言知识打卡 -->
+                <div class="tab-content active" id="vocabulary-content">
+                    <div class="form-group">
+                        <label>词汇学习类型:</label>
+                        <select id="vocabType">
+                            <option value="n4-review">N4复习词汇</option>
+                            <option value="n3-new">N3新学词汇</option>
+                            <option value="n2-core">N2核心词汇</option>
+                            <option value="kanji">汉字练习</option>
+                        </select>
                     </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>新学词汇数:</label>
+                            <input type="number" id="newWords" min="0" placeholder="新学词汇数量">
+                        </div>
+                        <div class="form-group">
+                            <label>复习词汇数:</label>
+                            <input type="number" id="reviewWords" min="0" placeholder="复习词汇数量">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>语法句型数:</label>
+                            <input type="number" id="grammarPatterns" min="0" placeholder="学习语法点数量">
+                        </div>
+                        <div class="form-group">
+                            <label>掌握程度:</label>
+                            <select id="vocabMastery">
+                                <option value="1">初步了解</option>
+                                <option value="2">基本掌握</option>
+                                <option value="3">熟练运用</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>学习内容记录:</label>
+                        <textarea id="vocabContent" placeholder="记录今天学习的重点词汇、语法点、难点等..."></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="submitVocabRecord()">提交语言知识打卡</button>
+                </div>
+
+                <!-- 阅读理解打卡 -->
+                <div class="tab-content" id="reading-content">
+                    <div class="form-group">
+                        <label>阅读材料类型:</label>
+                        <select id="readingType">
+                            <option value="short">短文理解 (200-300字)</option>
+                            <option value="medium">中篇文章 (400-600字)</option>
+                            <option value="long">长篇阅读 (600+字)</option>
+                            <option value="news">新闻阅读</option>
+                            <option value="academic">学术文章</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>完成文章数:</label>
+                            <input type="number" id="readingCount" min="0" placeholder="完成文章数量">
+                        </div>
+                        <div class="form-group">
+                            <label>正确率(%):</label>
+                            <input type="number" id="readingAccuracyInput" min="0" max="100" placeholder="答题正确率">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>阅读速度:</label>
+                            <select id="readingSpeed">
+                                <option value="1">较慢</option>
+                                <option value="2">正常</option>
+                                <option value="3">较快</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>理解程度:</label>
+                            <select id="readingComprehension">
+                                <option value="1">基本理解</option>
+                                <option value="2">良好理解</option>
+                                <option value="3">完全理解</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>阅读重点和难点:</label>
+                        <textarea id="readingContent" placeholder="记录阅读的文章主题、遇到的难点、新学的表达等..."></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="submitReadingRecord()">提交阅读理解打卡</button>
+                </div>
+
+                <!-- 听力理解打卡 -->
+                <div class="tab-content" id="listening-content">
+                    <div class="form-group">
+                        <label>听力材料类型:</label>
+                        <select id="listeningType">
+                            <option value="daily">日常对话</option>
+                            <option value="classroom">课堂讲解</option>
+                            <option value="news">新闻听力</option>
+                            <option value="announcement">公告广播</option>
+                            <option value="interview">访谈节目</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>练习时长(分钟):</label>
+                            <input type="number" id="listeningDuration" min="0" placeholder="听力练习时长">
+                        </div>
+                        <div class="form-group">
+                            <label>理解正确率(%):</label>
+                            <input type="number" id="listeningAccuracyInput" min="0" max="100" placeholder="理解正确率">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>主要难点:</label>
+                            <select id="listeningDifficulty">
+                                <option value="pronunciation">发音问题</option>
+                                <option value="speed">语速过快</option>
+                                <option value="vocabulary">词汇不熟</option>
+                                <option value="grammar">语法结构</option>
+                                <option value="context">语境理解</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>重听次数:</label>
+                            <select id="listeningRepeats">
+                                <option value="1">1次理解</option>
+                                <option value="2">2次理解</option>
+                                <option value="3">3次理解</option>
+                                <option value="4">4次以上</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>听力学习记录:</label>
+                        <textarea id="listeningContent" placeholder="记录听力材料内容、遇到的困难、改进方法等..."></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="submitListeningRecord()">提交听力理解打卡</button>
                 </div>
             </div>
         </div>
-    </section>
 
-    <!-- Main Content -->
-    <section class="max-w-6xl mx-auto px-4 pb-16">
-        <div class="grid md:grid-cols-5 gap-6">
-            <!-- Steps Navigation -->
-            <aside class="md:col-span-2">
-                <nav class="p-4 rounded-xl bg-white border border-gray-200 shadow-sm">
-                    <div class="space-y-2">
-                        <button onclick="showStep(0)" class="step-btn w-full text-left p-3 rounded-lg border-2 border-blue-900 bg-blue-900 text-white" data-step="0">
-                            <div class="text-sm font-semibold">1. 为什么要办？</div>
-                            <div class="text-xs opacity-80 mt-1">约1分钟</div>
-                        </button>
-                        
-                        <button onclick="showStep(1)" class="step-btn w-full text-left p-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50" data-step="1">
-                            <div class="text-sm font-semibold text-gray-900">2. 准备材料</div>
-                            <div class="text-xs text-gray-500 mt-1">约2分钟</div>
-                        </button>
-                        
-                        <button onclick="showStep(2)" class="step-btn w-full text-left p-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50" data-step="2">
-                            <div class="text-sm font-semibold text-gray-900">3. 线上预约</div>
-                            <div class="text-xs text-gray-500 mt-1">约2分钟</div>
-                        </button>
-                        
-                        <button onclick="showStep(3)" class="step-btn w-full text-left p-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50" data-step="3">
-                            <div class="text-sm font-semibold text-gray-900">4. 现场办理</div>
-                            <div class="text-xs text-gray-500 mt-1">约3分钟</div>
-                        </button>
-                        
-                        <button onclick="showStep(4)" class="step-btn w-full text-left p-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50" data-step="4">
-                            <div class="text-sm font-semibold text-gray-900">5. 激活与绑定</div>
-                            <div class="text-xs text-gray-500 mt-1">约1分钟</div>
-                        </button>
-                        
-                        <button onclick="showStep(5)" class="step-btn w-full text-left p-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50" data-step="5">
-                            <div class="text-sm font-semibold text-gray-900">6. 售后与保障</div>
-                            <div class="text-xs text-gray-500 mt-1">约1分钟</div>
-                        </button>
-                    </div>
-                    <p class="mt-3 text-xs text-gray-500">* 勾选进度会自动保存到本地浏览器</p>
-                </nav>
-            </aside>
-
-            <!-- Step Content -->
-            <main class="md:col-span-3">
-                <!-- Step 1: Why -->
-                <div id="step-0" class="step-content active bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <h3 class="text-lg font-bold text-gray-900">为什么要办？</h3>
-                            <p class="text-xs text-gray-500 mt-1">预计用时 约1分钟</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="previousStep()" class="px-3 py-1.5 rounded-lg border border-gray-300 text-sm text-gray-700 disabled:opacity-40" disabled>上一步</button>
-                            <button onclick="nextStep()" class="px-3 py-1.5 rounded-lg bg-blue-900 text-white text-sm disabled:opacity-40">下一步</button>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 space-y-2">
-                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
-                            <span class="text-sm text-gray-700">了解校园卡用途：门禁/食堂/图书/洗衣/打印/校车/考试签到</span>
-                        </label>
-                        
-                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
-                            <span class="text-sm text-gray-700">知晓不办理的影响：无法正常进出/消费与借阅不便</span>
-                        </label>
-                        
-                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
-                            <span class="text-sm text-gray-700">确认自愿原则：办理非强制，但强烈建议完成以便校园生活</span>
-                        </label>
-                    </div>
-
-                    <!-- FAQ Section -->
-                    <details class="mt-4 group">
-                        <summary class="cursor-pointer select-none">
-                            <div class="flex items-center gap-2 text-sm font-medium text-gray-900">
-                                <span class="inline-flex w-5 h-5 items-center justify-center rounded-full border border-gray-300">?</span>
-                                我还有顾虑/疑问
-                                <span class="ml-2 text-xs text-gray-500 group-open:hidden">▼</span>
-                                <span class="ml-2 text-xs text-gray-500 hidden group-open:inline">▲</span>
-                            </div>
-                        </summary>
-                        <div class="mt-3 space-y-2">
-                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
-                                <div class="text-sm font-medium text-gray-900">我担心被强制办理。</div>
-                                <div class="text-sm text-gray-700 mt-1">是否办理由你决定；但多数校内服务依赖校园卡，未办理会增加生活成本和时间成本。</div>
-                            </div>
-                            
-                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
-                                <div class="text-sm font-medium text-gray-900">担心隐私泄露。</div>
-                                <div class="text-sm text-gray-700 mt-1">仅采集学籍与身份认证必要信息；数据加密存储，权限可审计，可随时导出/注销卡片。</div>
-                            </div>
-                        </div>
-                    </details>
-
-                    <div class="mt-6 flex flex-wrap gap-3">
-                        <a href="#book-now" class="px-4 py-2 rounded-lg bg-blue-900 text-white text-sm hover:bg-blue-800 transition-colors">按此步骤去预约</a>
-                        <button onclick="resetProgress()" class="px-4 py-2 rounded-lg border border-gray-300 text-sm text-gray-700 hover:bg-gray-50">清空进度</button>
-                    </div>
-                </div>
-
-                <!-- Step 2: Preparation -->
-                <div id="step-1" class="step-content bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <h3 class="text-lg font-bold text-gray-900">准备材料</h3>
-                            <p class="text-xs text-gray-500 mt-1">预计用时 约2分钟</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="previousStep()" class="px-3 py-1.5 rounded-lg border border-gray-300 text-sm text-gray-700">上一步</button>
-                            <button onclick="nextStep()" class="px-3 py-1.5 rounded-lg bg-blue-900 text-white text-sm">下一步</button>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 space-y-2">
-                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
-                            <span class="text-sm text-gray-700">本人身份证或户口本（原件及照片）</span>
-                        </label>
-                        
-                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
-                            <span class="text-sm text-gray-700">录取通知书或学号/学籍号</span>
-                        </label>
-                        
-                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
-                            <span class="text-sm text-gray-700">一寸免冠证件照（电子版）</span>
-                        </label>
-                        
-                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
-                            <span class="text-sm text-gray-700">备用手机号与常用邮箱</span>
-                        </label>
-                    </div>
-
-                    <details class="mt-4 group">
-                        <summary class="cursor-pointer select-none">
-                            <div class="flex items-center gap-2 text-sm font-medium text-gray-900">
-                                <span class="inline-flex w-5 h-5 items-center justify-center rounded-full border border-gray-300">?</span>
-                                我还有顾虑/疑问
-                                <span class="ml-2 text-xs text-gray-500 group-open:hidden">▼</span>
-                                <span class="ml-2 text-xs text-gray-500 hidden group-open:inline">▲</span>
-                            </div>
-                        </summary>
-                        <div class="mt-3 space-y-2">
-                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
-                                <div class="text-sm font-medium text-gray-900">没有电子证件照？</div>
-                                <div class="text-sm text-gray-700 mt-1">可现场拍照或在自助机拍摄，费用公示后再确认是否使用。</div>
-                            </div>
-                            
-                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
-                                <div class="text-sm font-medium text-gray-900">忘带证件怎么办？</div>
-                                <div class="text-sm text-gray-700 mt-1">可先完成线上填报与预约，到场后由辅导员/学院进行校验。</div>
-                            </div>
-                        </div>
-                    </details>
-
-                    <div class="mt-6 flex flex-wrap gap-3">
-                        <a href="#book-now" class="px-4 py-2 rounded-lg bg-blue-900 text-white text-sm hover:bg-blue-800 transition-colors">按此步骤去预约</a>
-                        <button onclick="resetProgress()" class="px-4 py-2 rounded-lg border border-gray-300 text-sm text-gray-700 hover:bg-gray-50">清空进度</button>
-                    </div>
-                </div>
-
-                <!-- Step 3: Booking -->
-                <div id="step-2" class="step-content bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <h3 class="text-lg font-bold text-gray-900">线上预约</h3>
-                            <p class="text-xs text-gray-500 mt-1">预计用时 约2分钟</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="previousStep()" class="px-3 py-1.5 rounded-lg border border-gray-300 text-sm text-gray-700">上一步</button>
-                            <button onclick="nextStep()" class="px-3 py-1.5 rounded-lg bg-blue-900 text-white text-sm">下一步</button>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 space-y-2">
-                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
-                            <span class="text-sm text-gray-700">登录新生服务平台或小程序（学校官方入口）</span>
-                        </label>
-                        
-                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
-                            <span class="text-sm text-gray-700">选择"校园卡办理预约"，选取时间与地点</span>
-                        </label>
-                        
-                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
-                            <span class="text-sm text-gray-700">在线阅读并同意《校园卡使用与隐私说明》</span>
-                        </label>
-                    </div>
-
-                    <details class="mt-4 group">
-                        <summary class="cursor-pointer select-none">
-                            <div class="flex items-center gap-2 text-sm font-medium text-gray-900">
-                                <span class="inline-flex w-5 h-5 items-center justify-center rounded-full border border-gray-300">?</span>
-                                我还有顾虑/疑问
-                                <span class="ml-2 text-xs text-gray-500 group-open:hidden">▼</span>
-                                <span class="ml-2 text-xs text-gray-500 hidden group-open:inline">▲</span>
-                            </div>
-                        </summary>
-                        <div class="mt-3 space-y-2">
-                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
-                                <div class="text-sm font-medium text-gray-900">不确定入口是否官方？</div>
-                                <div class="text-sm text-gray-700 mt-1">认准 *.university.edu.cn 或学校认证小程序；不在群聊里点陌生链接。</div>
-                            </div>
-                            
-                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
-                                <div class="text-sm font-medium text-gray-900">担心排队?</div>
-                                <div class="text-sm text-gray-700 mt-1">预约按时间段分流，平均办理用时≈10分钟。</div>
-                            </div>
-                        </div>
-                    </details>
-
-                    <div class="mt-6 flex flex-wrap gap-3">
-                        <a href="#book-now" class="px-4 py-2 rounded-lg bg-blue-900 text-white text-sm hover:bg-blue-800 transition-colors">按此步骤去预约</a>
-                        <button onclick="resetProgress()" class="px-4 py-2 rounded-lg border border-gray-300 text-sm text-gray-700 hover:bg-gray-50">清空进度</button>
-                    </div>
-                </div>
-
-                <!-- Step 4: Onsite -->
-                <div id="step-3" class="step-content bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <h3 class="text-lg font-bold text-gray-900">现场办理</h3>
-                            <p class="text-xs text-gray-500 mt-1">预计用时 约3分钟</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="previousStep()" class="px-3 py-1.5 rounded-lg border border-gray-300 text-sm text-gray-700">上一步</button>
-                            <button onclick="nextStep()" class="px-3 py-1.5 rounded-lg bg-blue-900 text-white text-sm">下一步</button>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 space-y-2">
-                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
-                            <span class="text-sm text-gray-700">到达服务点 → 出示预约码与身份证件</span>
-                        </label>
-                        
-                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
-                            <span class="text-sm text-gray-700">核验信息 → 拍照/补充资料（如需要）</span>
-                        </label>
-                        
-                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
-                            <span class="text-sm text-gray-700">确认费用清单 → 现场制卡或次日领卡</span>
-                        </label>
-                    </div>
-
-                    <details class="mt-4 group">
-                        <summary class="cursor-pointer select-none">
-                            <div class="flex items-center gap-2 text-sm font-medium text-gray-900">
-                                <span class="inline-flex w-5 h-5 items-center justify-center rounded-full border border-gray-300">?</span>
-                                我还有顾虑/疑问
-                                <span class="ml-2 text-xs text-gray-500 group-open:hidden">▼</span>
-                                <span class="ml-2 text-xs text-gray-500 hidden group-open:inline">▲</span>
-                            </div>
-                        </summary>
-                        <div class="mt-3 space-y-2">
-                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
-                                <div class="text-sm font-medium text-gray-900">一定要当场付款吗？</div>
-                                <div class="text-sm text-gray-700 mt-1">费用以项目为准，可现场或线上缴费；所有收费项现场公示且可开具票据。</div>
-                            </div>
-                            
-                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
-                                <div class="text-sm font-medium text-gray-900">制卡失败怎么办？</div>
-                                <div class="text-sm text-gray-700 mt-1">将提供临时通行二维码与补办窗口，确保当日基本通行。</div>
-                            </div>
-                        </div>
-                    </details>
-
-                    <div class="mt-6 flex flex-wrap gap-3">
-                        <a href="#book-now" class="px-4 py-2 rounded-lg bg-blue-900 text-white text-sm hover:bg-blue-800 transition-colors">按此步骤去预约</a>
-                        <button onclick="resetProgress()" class="px-4 py-2 rounded-lg border border-gray-300 text-sm text-gray-700 hover:bg-gray-50">清空进度</button>
-                    </div>
-                </div>
-
-                <!-- Step 5: Activate -->
-                <div id="step-4" class="step-content bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <h3 class="text-lg font-bold text-gray-900">激活与绑定</h3>
-                            <p class="text-xs text-gray-500 mt-1">预计用时 约1分钟</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="previousStep()" class="px-3 py-1.5 rounded-lg border border-gray-300 text-sm text-gray-700">上一步</button>
-                            <button onclick="nextStep()" class="px-3 py-1.5 rounded-lg bg-blue-900 text-white text-sm">下一步</button>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 space-y-2">
-                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
-                            <span class="text-sm text-gray-700">下载校园App/登录服务号，绑定学号</span>
-                        </label>
-                        
-                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
-                            <span class="text-sm text-gray-700">设置支付限额与自动挂失开关</span>
-                        </label>
-                        
-                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
-                            <span class="text-sm text-gray-700">为卡片充值（可选，支持家长代充）</span>
-                        </label>
-                    </div>
-
-                    <details class="mt-4 group">
-                        <summary class="cursor-pointer select-none">
-                            <div class="flex items-center gap-2 text-sm font-medium text-gray-900">
-                                <span class="inline-flex w-5 h-5 items-center justify-center rounded-full border border-gray-300">?</span>
-                                我还有顾虑/疑问
-                                <span class="ml-2 text-xs text-gray-500 group-open:hidden">▼</span>
-                                <span class="ml-2 text-xs text-gray-500 hidden group-open:inline">▲</span>
-                            </div>
-                        </summary>
-                        <div class="mt-3 space-y-2">
-                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
-                                <div class="text-sm font-medium text-gray-900">卡丢了怎么办？</div>
-                                <div class="text-sm text-gray-700 mt-1">在App/自助机一键挂失并可临时生成二维码；补卡后原资金自动转入。</div>
-                            </div>
-                            
-                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
-                                <div class="text-sm font-medium text-gray-900">怕被盗刷？</div>
-                                <div class="text-sm text-gray-700 mt-1">可设置每日限额/免密限额，超过需再次验证。</div>
-                            </div>
-                        </div>
-                    </details>
-
-                    <div class="mt-6 flex flex-wrap gap-3">
-                        <a href="#book-now" class="px-4 py-2 rounded-lg bg-blue-900 text-white text-sm hover:bg-blue-800 transition-colors">按此步骤去预约</a>
-                        <button onclick="resetProgress()" class="px-4 py-2 rounded-lg border border-gray-300 text-sm text-gray-700 hover:bg-gray-50">清空进度</button>
-                    </div>
-                </div>
-
-                <!-- Step 6: After Service -->
-                <div id="step-5" class="step-content bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-                    <div class="flex items-start justify-between">
-                        <div>
-                            <h3 class="text-lg font-bold text-gray-900">售后与保障</h3>
-                            <p class="text-xs text-gray-500 mt-1">预计用时 约1分钟</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="previousStep()" class="px-3 py-1.5 rounded-lg border border-gray-300 text-sm text-gray-700">上一步</button>
-                            <button onclick="nextStep()" class="px-3 py-1.5 rounded-lg bg-blue-900 text-white text-sm disabled:opacity-40" disabled>下一步</button>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 space-y-2">
-                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
-                            <span class="text-sm text-gray-700">了解常见问题与服务时段</span>
-                        </label>
-                        
-                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
-                            <span class="text-sm text-gray-700">保存客服热线与线下网点位置</span>
-                        </label>
-                        
-                        <label class="flex items-start gap-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer">
-                            <input type="checkbox" class="mt-1 w-4 h-4 text-blue-900" onchange="updateProgress()">
-                            <span class="text-sm text-gray-700">关注平台消息：异常交易/余额变动提醒</span>
-                        </label>
-                    </div>
-
-                    <details class="mt-4 group">
-                        <summary class="cursor-pointer select-none">
-                            <div class="flex items-center gap-2 text-sm font-medium text-gray-900">
-                                <span class="inline-flex w-5 h-5 items-center justify-center rounded-full border border-gray-300">?</span>
-                                我还有顾虑/疑问
-                                <span class="ml-2 text-xs text-gray-500 group-open:hidden">▼</span>
-                                <span class="ml-2 text-xs text-gray-500 hidden group-open:inline">▲</span>
-                            </div>
-                        </summary>
-                        <div class="mt-3 space-y-2">
-                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
-                                <div class="text-sm font-medium text-gray-900">能注销或暂停吗？</div>
-                                <div class="text-sm text-gray-700 mt-1">可在毕业/退学/长期离校时申请注销或休眠，余额原路退回。</div>
-                            </div>
-                            
-                            <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
-                                <div class="text-sm font-medium text-gray-900">能换头像/昵称？</div>
-                                <div class="text-sm text-gray-700 mt-1">可在个人中心更改头像与昵称，不影响身份认证信息。</div>
-                            </div>
-                        </div>
-                    </details>
-
-                    <div class="mt-6 flex flex-wrap gap-3">
-                        <a href="#book-now" class="px-4 py-2 rounded-lg bg-blue-900 text-white text-sm hover:bg-blue-800 transition-colors">按此步骤去预约</a>
-                        <button onclick="resetProgress()" class="px-4 py-2 rounded-lg border border-gray-300 text-sm text-gray-700 hover:bg-gray-50">清空进度</button>
-                    </div>
-                </div>
-            </main>
-        </div>
-
-        <!-- FAQ Section -->
-        <div class="mt-8 bg-white rounded-xl border border-gray-200 shadow-sm p-5">
-            <div class="flex items-center gap-2 mb-4">
-                <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                <h4 class="text-base font-bold text-gray-900">常见问题</h4>
-            </div>
-            
-            <div class="space-y-3">
-                <details class="group">
-                    <summary class="cursor-pointer select-none p-3 rounded-lg hover:bg-gray-50">
-                        <div class="text-sm font-medium text-gray-900">校园卡是否强制？</div>
-                    </summary>
-                    <div class="px-3 pb-3 text-sm text-gray-700">
-                        不强制。但多数校内场景依赖校园卡（门禁/消费/借阅），未办理将带来不便。
-                    </div>
-                </details>
-                
-                <details class="group">
-                    <summary class="cursor-pointer select-none p-3 rounded-lg hover:bg-gray-50">
-                        <div class="text-sm font-medium text-gray-900">收费标准？</div>
-                    </summary>
-                    <div class="px-3 pb-3 text-sm text-gray-700">
-                        制作费、工本费、补拍照等项目当场公示；任何非公示收费均可拒绝并投诉。
-                    </div>
-                </details>
-                
-                <details class="group">
-                    <summary class="cursor-pointer select-none p-3 rounded-lg hover:bg-gray-50">
-                        <div class="text-sm font-medium text-gray-900">信息是否只用于校园？</div>
-                    </summary>
-                    <div class="px-3 pb-3 text-sm text-gray-700">
-                        用于身份认证与业务办理，不对外共享；任何超范围使用须再次征得同意。
-                    </div>
-                </details>
-                
-                <details class="group">
-                    <summary class="cursor-pointer select-none p-3 rounded-lg hover:bg-gray-50">
-                        <div class="text-sm font-medium text-gray-900">支持家长代充吗？</div>
-                    </summary>
-                    <div class="px-3 pb-3 text-sm text-gray-700">
-                        支持。可通过学号绑定的充值链接或App完成。
-                    </div>
-                </details>
-                
-                <details class="group">
-                    <summary class="cursor-pointer select-none p-3 rounded-lg hover:bg-gray-50">
-                        <div class="text-sm font-medium text-gray-900">丢卡被人刷怎么办？</div>
-                    </summary>
-                    <div class="px-3 pb-3 text-sm text-gray-700">
-                        设置限额+免密阈值；一键挂失后不再扣费，异常交易可申诉。
-                    </div>
-                </details>
-            </div>
-        </div>
-    </section>
-
-    <!-- Privacy Modal -->
-    <div id="privacyModal" class="fixed inset-0 z-50 hidden">
-        <div class="absolute inset-0 bg-black/40" onclick="hidePrivacy()"></div>
-        <div class="relative z-10 flex items-center justify-center p-4 min-h-screen">
-            <div class="relative bg-white rounded-2xl shadow-xl max-w-lg w-full p-6">
-                <button onclick="hidePrivacy()" class="absolute top-4 right-4 p-1 rounded-lg hover:bg-gray-100">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                </button>
-                
-                <h5 class="text-lg font-bold text-gray-900 mb-4">校园卡使用与隐私说明（摘要）</h5>
-                
-                <ol class="list-decimal list-inside text-sm text-gray-700 space-y-2">
-                    <li>仅收集办理所需的最小信息集；用途限定为身份认证与校内服务。</li>
-                    <li>数据加密存储，访问有审计；你可查询、下载或申请删除个人数据。</li>
-                    <li>费用项目与上限现场公示，拒绝任何未明示收费。</li>
-                    <li>如发生异常交易或丢卡，将提供临时通行与快速止损机制。</li>
-                </ol>
-                
-                <p class="mt-4 text-xs text-gray-500">* 完整条款以学校正式文件为准。</p>
+        <!-- 学习记录 -->
+        <div class="section">
+            <h2>学习记录</h2>
+            <div class="record-list" id="recordList">
+                <!-- 记录将在这里显示 -->
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="border-t border-gray-200 bg-white">
-        <div class="max-w-6xl mx-auto px-4 py-8">
-            <p class="text-xs text-gray-500 text-center">
-                © 2025 某某大学 · 信息化建设与管理办公室｜如需对接你校内容，请告知具体政策与入口，我们可替换示例链接与字段。
-            </p>
-        </div>
-    </footer>
-
     <script>
-        let currentStep = 0;
-        const totalSteps = 6;
+        // 全局变量
+        let startTime = null;
+        let elapsedTime = 0;
+        let timerInterval = null;
+        let isRunning = false;
+        let currentTab = 'vocabulary';
 
-        // Initialize progress from localStorage
-        function initProgress() {
-            const saved = localStorage.getItem('campusCardProgress');
-            if (saved) {
-                const checks = JSON.parse(saved);
-                Object.keys(checks).forEach(stepKey => {
-                    const stepIndex = parseInt(stepKey.replace('step', ''));
-                    const checkboxes = document.querySelectorAll(`#step-${stepIndex} input[type="checkbox"]`);
-                    checkboxes.forEach((cb, index) => {
-                        if (checks[stepKey][index]) {
-                            cb.checked = true;
-                        }
-                    });
-                });
-                updateProgress();
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            updateAllDisplays();
+        });
+
+        // 计时器功能
+        function startTimer() {
+            if (!isRunning) {
+                startTime = Date.now() - elapsedTime;
+                timerInterval = setInterval(updateTimer, 1000);
+                isRunning = true;
+                console.log('计时器已启动');
             }
         }
 
-        // Save progress to localStorage
-        function saveProgress() {
-            const progress = {};
-            for (let i = 0; i < totalSteps; i++) {
-                const checkboxes = document.querySelectorAll(`#step-${i} input[type="checkbox"]`);
-                progress[`step${i}`] = Array.from(checkboxes).map(cb => cb.checked);
+        function pauseTimer() {
+            if (isRunning) {
+                clearInterval(timerInterval);
+                isRunning = false;
+                console.log('计时器已暂停');
             }
-            localStorage.setItem('campusCardProgress', JSON.stringify(progress));
         }
 
-        // Update progress bar
-        function updateProgress() {
-            saveProgress();
+        function stopTimer() {
+            clearInterval(timerInterval);
+            isRunning = false;
             
-            let total = 0;
-            let checked = 0;
-            
-            for (let i = 0; i < totalSteps; i++) {
-                const checkboxes = document.querySelectorAll(`#step-${i} input[type="checkbox"]`);
-                total += checkboxes.length;
-                checked += Array.from(checkboxes).filter(cb => cb.checked).length;
+            if (elapsedTime > 0) {
+                saveStudyTime(elapsedTime);
+                alert('学习时间已保存！');
             }
             
-            const percent = Math.round((checked / total) * 100);
-            document.getElementById('progressBar').style.width = `${percent}%`;
-            document.getElementById('progressText').textContent = `完成度 ${percent}%`;
+            elapsedTime = 0;
+            updateTimer();
+            updateAllDisplays();
         }
 
-        // Show specific step
-        function showStep(step) {
-            // Hide all steps
-            document.querySelectorAll('.step-content').forEach(el => {
-                el.classList.remove('active');
+        function updateTimer() {
+            if (isRunning) {
+                elapsedTime = Date.now() - startTime;
+            }
+            
+            const totalSeconds = Math.floor(elapsedTime / 1000);
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            
+            const display = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('timer').textContent = display;
+        }
+
+        // 标签切换
+        function switchTab(tabName) {
+            // 隐藏所有标签内容
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
             });
             
-            // Show selected step
-            document.getElementById(`step-${step}`).classList.add('active');
+            // 移除所有标签的active类
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
             
-            // Update navigation buttons
-            document.querySelectorAll('.step-btn').forEach((btn, index) => {
-                if (index === step) {
-                    btn.className = 'step-btn w-full text-left p-3 rounded-lg border-2 border-blue-900 bg-blue-900 text-white';
+            // 显示选中的标签内容
+            document.getElementById(tabName + '-content').classList.add('active');
+            
+            // 为选中的标签添加active类
+            event.target.classList.add('active');
+            
+            currentTab = tabName;
+            console.log('切换到标签:', tabName);
+        }
+
+        // AI助手功能
+        async function askAI() {
+    const question = document.getElementById('chatInput').value;
+    const responseDiv = document.getElementById('chatResponse');
+    
+    if (!question.trim()) {
+        alert('请输入您的问题');
+        return;
+    }
+    
+    responseDiv.innerHTML = '<p>AI助手正在思考中...</p>';
+    
+    try {
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ question: question })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            responseDiv.innerHTML = `<p><strong>AI助手回答：</strong></p><div style="line-height: 1.6;">${data.response.replace(/\n/g, '<br>')}</div>`;
+        } else {
+            responseDiv.innerHTML = `<p><strong>错误：</strong></p><p>${data.error}</p>`;
+        }
+        
+        document.getElementById('chatInput').value = '';
+        
+    } catch (error) {
+        console.error('请求失败:', error);
+        responseDiv.innerHTML = '<p><strong>网络错误：</strong></p><p>请检查网络连接并重试</p>';
+    }
+}
+
+
+        function getAIResponse(question) {
+            // 简单的关键词匹配回答（实际使用时需要接入真实AI）
+            const responses = {
+                '词汇': '建议使用间隔重复的方法背单词，每天新学30-40个，复习之前学过的50-60个。可以使用Anki等工具制作词汇卡片。',
+                '语法': 'N2语法重点在于理解语法的使用场景和语感。建议多做例句练习，理解每个语法点的细微差别。',
+                '听力': '听力提升需要循序渐进：1)先熟悉发音规律 2)练习关键词捕捉 3)理解语调语气 4)培养语境推理能力。每天至少练习30分钟。',
+                '阅读': '阅读要注意：1)先读题目了解要求 2)快速浏览文章把握大意 3)精读关键段落 4)注意逻辑关系词。多练习不同类型的文章。',
+                '计划': '建议按照您当前的N5水平，重点先巩固N4内容，再逐步过渡到N3和N2。每天3小时的安排很合理。'
+            };
+            
+            for (let key in responses) {
+                if (question.includes(key)) {
+                    return `<p><strong>AI助手回答：</strong></p><p>${responses[key]}</p>`;
+                }
+            }
+            
+            return '<p><strong>AI助手回答：</strong></p><p>这是一个很好的问题！建议您可以：1)制定具体的学习计划 2)多练习真题 3)坚持每日复习 4)找到适合自己的学习方法。如果有具体的词汇、语法、听力或阅读问题，可以更具体地提问哦！</p>';
+        }
+
+        // 保存学习时间
+        function saveStudyTime(timeMs) {
+            const today = new Date().toDateString();
+            let studyData = JSON.parse(localStorage.getItem('studyData') || '{}');
+            
+            if (!studyData[today]) {
+                studyData[today] = { 
+                    totalTime: 0, 
+                    records: [],
+                    vocabCount: 0,
+                    readingCount: 0,
+                    listeningTime: 0
+                };
+            }
+            
+            studyData[today].totalTime += timeMs;
+            localStorage.setItem('studyData', JSON.stringify(studyData));
+        }
+
+        // 提交各类学习记录
+        function submitVocabRecord() {
+            const data = {
+                type: 'vocabulary',
+                vocabType: document.getElementById('vocabType').value,
+                newWords: parseInt(document.getElementById('newWords').value) || 0,
+                reviewWords: parseInt(document.getElementById('reviewWords').value) || 0,
+                grammarPatterns: parseInt(document.getElementById('grammarPatterns').value) || 0,
+                mastery: document.getElementById('vocabMastery').value,
+                content: document.getElementById('vocabContent').value
+            };
+            
+            if (!data.content.trim() && data.newWords === 0 && data.grammarPatterns === 0) {
+                alert('请填写学习内容或数量');
+                return;
+            }
+            
+            saveRecord(data);
+            clearVocabForm();
+            alert('语言知识打卡成功！');
+        }
+
+        function submitReadingRecord() {
+            const data = {
+                type: 'reading',
+                readingType: document.getElementById('readingType').value,
+                count: parseInt(document.getElementById('readingCount').value) || 0,
+                accuracy: parseInt(document.getElementById('readingAccuracyInput').value) || 0,
+                speed: document.getElementById('readingSpeed').value,
+                comprehension: document.getElementById('readingComprehension').value,
+                content: document.getElementById('readingContent').value
+            };
+            
+            if (!data.content.trim() && data.count === 0) {
+                alert('请填写学习内容或完成数量');
+                return;
+            }
+            
+            saveRecord(data);
+            clearReadingForm();
+            alert('阅读理解打卡成功！');
+        }
+
+        function submitListeningRecord() {
+            const data = {
+                type: 'listening',
+                listeningType: document.getElementById('listeningType').value,
+                duration: parseInt(document.getElementById('listeningDuration').value) || 0,
+                accuracy: parseInt(document.getElementById('listeningAccuracyInput').value) || 0,
+                difficulty: document.getElementById('listeningDifficulty').value,
+                repeats: document.getElementById('listeningRepeats').value,
+                content: document.getElementById('listeningContent').value
+            };
+            
+            if (!data.content.trim() && data.duration === 0) {
+                alert('请填写学习内容或练习时长');
+                return;
+            }
+            
+            saveRecord(data);
+            clearListeningForm();
+            alert('听力理解打卡成功！');
+        }
+
+        function saveRecord(data) {
+            const today = new Date().toDateString();
+            let studyData = JSON.parse(localStorage.getItem('studyData') || '{}');
+            
+            if (!studyData[today]) {
+                studyData[today] = { 
+                    totalTime: 0, 
+                    records: [],
+                    vocabCount: 0,
+                    readingCount: 0,
+                    listeningTime: 0
+                };
+            }
+            
+            data.timestamp = new Date().toTimeString().slice(0, 5);
+            studyData[today].records.push(data);
+            
+            // 更新统计数据
+            if (data.type === 'vocabulary') {
+                studyData[today].vocabCount += data.newWords + data.reviewWords;
+            } else if (data.type === 'reading') {
+                studyData[today].readingCount += data.count;
+            } else if (data.type === 'listening') {
+                studyData[today].listeningTime += data.duration;
+            }
+            
+            localStorage.setItem('studyData', JSON.stringify(studyData));
+            updateAllDisplays();
+        }
+
+        // 清空表单
+        function clearVocabForm() {
+            document.getElementById('newWords').value = '';
+            document.getElementById('reviewWords').value = '';
+            document.getElementById('grammarPatterns').value = '';
+            document.getElementById('vocabContent').value = '';
+        }
+
+                function clearReadingForm() {
+            document.getElementById('readingCount').value = '';
+            document.getElementById('readingAccuracyInput').value = '';
+            document.getElementById('readingContent').value = '';
+        }
+
+        function clearListeningForm() {
+            document.getElementById('listeningDuration').value = '';
+            document.getElementById('listeningAccuracyInput').value = '';
+            document.getElementById('listeningContent').value = '';
+        }
+
+        // 更新每日目标
+        function updateDailyGoals() {
+            const goals = {
+                time: parseInt(document.getElementById('timeGoal').value) || 3,
+                vocab: parseInt(document.getElementById('vocabGoal').value) || 30,
+                reading: parseInt(document.getElementById('readingGoal').value) || 2,
+                listening: parseInt(document.getElementById('listeningGoal').value) || 30
+            };
+            
+            localStorage.setItem('dailyGoals', JSON.stringify(goals));
+            checkGoalProgress();
+            alert('今日目标已更新！');
+        }
+
+        // 检查目标完成情况
+        function checkGoalProgress() {
+            const goals = JSON.parse(localStorage.getItem('dailyGoals') || '{"time":3,"vocab":30,"reading":2,"listening":30}');
+            const today = new Date().toDateString();
+            const studyData = JSON.parse(localStorage.getItem('studyData') || '{}');
+            const todayData = studyData[today] || { totalTime: 0, vocabCount: 0, readingCount: 0, listeningTime: 0 };
+            
+            // 检查时间目标
+            const currentHours = (todayData.totalTime + elapsedTime) / 3600000;
+            updateGoalStatus('timeStatus', currentHours >= goals.time);
+            
+            // 检查词汇目标
+            updateGoalStatus('vocabStatus', todayData.vocabCount >= goals.vocab);
+            
+            // 检查阅读目标
+            updateGoalStatus('readingStatus', todayData.readingCount >= goals.reading);
+            
+            // 检查听力目标
+            updateGoalStatus('listeningStatus', todayData.listeningTime >= goals.listening);
+        }
+
+        function updateGoalStatus(statusId, completed) {
+            const statusElement = document.getElementById(statusId);
+            if (completed) {
+                statusElement.textContent = '已完成';
+                statusElement.className = 'goal-status goal-completed';
+            } else {
+                statusElement.textContent = '未完成';
+                statusElement.className = 'goal-status goal-pending';
+            }
+        }
+
+        // 更新所有显示数据
+        function updateAllDisplays() {
+            const studyData = JSON.parse(localStorage.getItem('studyData') || '{}');
+            const today = new Date().toDateString();
+            
+            // 更新统计数据
+            const todayData = studyData[today] || { totalTime: 0, vocabCount: 0, readingCount: 0, listeningTime: 0 };
+            const todayHours = (todayData.totalTime + elapsedTime) / 3600000;
+            document.getElementById('todayHours').textContent = todayHours.toFixed(1);
+            
+            let totalHours = 0;
+            let totalDays = 0;
+            Object.values(studyData).forEach(day => {
+                totalHours += day.totalTime / 3600000;
+                if (day.totalTime > 0) totalDays++;
+            });
+            document.getElementById('totalHours').textContent = totalHours.toFixed(0);
+            
+            // 连续学习天数
+            let streakDays = 0;
+            let currentDate = new Date();
+            while (true) {
+                const dateStr = currentDate.toDateString();
+                if (studyData[dateStr] && studyData[dateStr].totalTime > 0) {
+                    streakDays++;
+                    currentDate.setDate(currentDate.getDate() - 1);
                 } else {
-                    btn.className = 'step-btn w-full text-left p-3 rounded-lg border border-gray-200 bg-white hover:bg-gray-50';
+                    break;
+                }
+            }
+            document.getElementById('streakDays').textContent = streakDays;
+            
+            // 日均学习时长
+            const avgDaily = totalDays > 0 ? totalHours / totalDays : 0;
+            document.getElementById('avgDaily').textContent = avgDaily.toFixed(1);
+            
+            // 更新记录列表
+            updateRecordList();
+            
+            // 检查目标进度
+            checkGoalProgress();
+        }
+
+        function updateRecordList() {
+            const studyData = JSON.parse(localStorage.getItem('studyData') || '{}');
+            const recordList = document.getElementById('recordList');
+            
+            recordList.innerHTML = '';
+            
+            const sortedDates = Object.keys(studyData).sort((a, b) => new Date(b) - new Date(a));
+            
+            sortedDates.slice(0, 10).forEach(dateStr => {
+                const dayData = studyData[dateStr];
+                const date = new Date(dateStr);
+                
+                if (dayData.records && dayData.records.length > 0) {
+                    dayData.records.forEach(record => {
+                        const item = document.createElement('div');
+                        item.className = `record-item ${record.type}`;
+                        
+                        const typeNames = {
+                            vocabulary: '语言知识',
+                            reading: '阅读理解', 
+                            listening: '听力理解'
+                        };
+                        
+                        let details = '';
+                        if (record.type === 'vocabulary') {
+                            details = `新学词汇:${record.newWords}个 | 复习词汇:${record.reviewWords}个 | 语法:${record.grammarPatterns}个`;
+                        } else if (record.type === 'reading') {
+                            details = `完成文章:${record.count}篇 | 正确率:${record.accuracy}%`;
+                        } else if (record.type === 'listening') {
+                            details = `练习时长:${record.duration}分钟 | 正确率:${record.accuracy}%`;
+                        }
+                        
+                        item.innerHTML = `
+                            <div class="record-date">
+                                ${typeNames[record.type]} | ${date.getMonth() + 1}月${date.getDate()}日 ${record.timestamp}
+                            </div>
+                            <div>
+                                ${record.content}
+                                ${details ? ` | ${details}` : ''}
+                            </div>
+                        `;
+                        
+                        recordList.appendChild(item);
+                    });
                 }
             });
-            
-            currentStep = step;
-            
-            // Update next/prev button states
-            const prevBtn = document.querySelector('#step-' + step + ' button[onclick="previousStep()"]');
-            const nextBtn = document.querySelector('#step-' + step + ' button[onclick="nextStep()"]');
-            
-            if (prevBtn) prevBtn.disabled = step === 0;
-            if (nextBtn) nextBtn.disabled = step === totalSteps - 1;
         }
 
-        // Next step
-        function nextStep() {
-            if (currentStep < totalSteps - 1) {
-                showStep(currentStep + 1);
+        function loadData() {
+            // 加载保存的目标设置
+            const goals = JSON.parse(localStorage.getItem('dailyGoals') || '{"time":3,"vocab":30,"reading":2,"listening":30}');
+            document.getElementById('timeGoal').value = goals.time;
+            document.getElementById('vocabGoal').value = goals.vocab;
+            document.getElementById('readingGoal').value = goals.reading;
+            document.getElementById('listeningGoal').value = goals.listening;
+        }
+
+        // 每秒更新计时器和目标检查
+        setInterval(() => {
+            if (isRunning) {
+                updateTimer();
+                checkGoalProgress();
             }
-        }
-
-        // Previous step
-        function previousStep() {
-            if (currentStep > 0) {
-                showStep(currentStep - 1);
-            }
-        }
-
-        // Reset progress
-        function resetProgress() {
-            if (confirm('确定要清空所有进度吗？')) {
-                localStorage.removeItem('campusCardProgress');
-                document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-                    cb.checked = false;
-                });
-                updateProgress();
-            }
-        }
-
-        // Show privacy modal
-        function showPrivacy() {
-            document.getElementById('privacyModal').classList.remove('hidden');
-        }
-
-        // Hide privacy modal
-        function hidePrivacy() {
-            document.getElementById('privacyModal').classList.add('hidden');
-        }
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            initProgress();
-        });
+        }, 1000);
     </script>
 </body>
 </html>
