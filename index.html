@@ -2,939 +2,100 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JLPT N2 完整学习打卡系统</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            margin: 0;
-            padding: 20px;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .header h1 {
-            color: #333;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-        .countdown {
-            background: linear-gradient(45deg, #ff6b6b, #ffa500);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            font-size: 1.2em;
-            margin-bottom: 20px;
-        }
-
-        .daily-goals {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            border: 2px solid #e9ecef;
-            margin-bottom: 30px;
-        }
-        .goals-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-top: 15px;
-        }
-        .goal-card {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            border: 2px solid #dee2e6;
-            text-align: center;
-        }
-        .goal-input {
-            width: 60px;
-            text-align: center;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 5px;
-        }
-        .goal-status {
-            margin-top: 10px;
-            padding: 5px;
-            border-radius: 15px;
-            font-size: 0.9em;
-            font-weight: bold;
-        }
-        .goal-completed {
-            background: #d4edda;
-            color: #155724;
-        }
-        .goal-pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        .section {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            border: 2px solid #e9ecef;
-        }
-        .section h2 {
-            color: #495057;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
-        }
-        .timer-display {
-            font-size: 3em;
-            color: #667eea;
-            text-align: center;
-            margin: 20px 0;
-            font-weight: bold;
-        }
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1em;
-            margin: 5px;
-            transition: all 0.3s ease;
-        }
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-        }
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-
-        .study-tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #e2e8f0;
-        }
-        .tab {
-            padding: 12px 20px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 1em;
-            color: #666;
-            border-bottom: 3px solid transparent;
-            transition: all 0.3s ease;
-        }
-        .tab.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
-            background: rgba(102, 126, 234, 0.1);
-        }
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #495057;
-        }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #dee2e6;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-        .form-group textarea {
-            height: 80px;
-            resize: vertical;
-        }
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .stat-card {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid #dee2e6;
-        }
-        .stat-number {
-            font-size: 2em;
-            color: #667eea;
-            font-weight: bold;
-            display: block;
-        }
-        .stat-label {
-            color: #6c757d;
-            font-size: 0.9em;
-            margin-top: 5px;
-        }
-        .record-list {
-            max-height: 400px;
-            overflow-y: auto;
-            margin-top: 20px;
-        }
-        .record-item {
-            background: white;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-        }
-        .record-item.vocabulary {
-            border-left-color: #48bb78;
-        }
-        .record-item.reading {
-            border-left-color: #667eea;
-        }
-        .record-item.listening {
-            border-left-color: #f56565;
-        }
-        .record-date {
-            font-size: 0.9em;
-            color: #6c757d;
-            margin-bottom: 5px;
-        }
-
-        .ai-chat {
-            background: #f0f8ff;
-            border: 2px solid #b0d4ff;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-        .chat-input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ccc;
-            border-radius: 8px;
-            margin-bottom: 10px;
-        }
-        .chat-response {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            border-left: 4px solid #667eea;
-            min-height: 100px;
-        }
-
-        @media (max-width: 768px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            .goals-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-    </style>
+    <title>日语学习打卡系统</title>
+    <!-- 你的CSS样式 -->
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>JLPT N2 完整学习打卡系统</h1>
-            <div class="countdown">
-                <strong>距离N2考试还有：<span id="daysLeft">60</span> 天</strong>
-            </div>
+        <h1>JLPT N2 学习系统</h1>
+        
+        <!-- API密钥设置区域 - 更明显的版本 -->
+        <div style="background: #fffacd; border: 3px solid #ffd700; padding: 20px; margin: 20px 0; border-radius: 10px;">
+            <h2 style="color: #ff6b6b;">⚠️ 首次使用必须设置</h2>
+            <label for="apiKeyInput" style="font-size: 16px; font-weight: bold;">请输入您的Gemini API密钥：</label>
+            <input type="password" id="apiKeyInput" placeholder="粘贴您的API密钥..." style="width: 100%; padding: 15px; font-size: 14px; border: 2px solid #ff6b6b; margin: 10px 0;">
+            <button onclick="saveApiKey()" style="background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; font-size: 16px;">保存API密钥</button>
+            <p style="color: #666; font-size: 14px;">密钥将保存在您的浏览器本地，仅您可见</p>
         </div>
 
-        <!-- AI学习助手 -->
+        <!-- AI助手区域 -->
         <div class="ai-chat">
-            <h2>日语学习AI助手</h2>
-            <p>有任何日语学习问题都可以问我！比如：词汇解释、语法疑难、学习建议等</p>
-            <input type="text" id="chatInput" class="chat-input" placeholder="输入您的日语学习问题..." />
-            <button class="btn btn-primary" onclick="askAI()">询问AI</button>
-            <div class="chat-response" id="chatResponse">AI助手准备就绪，随时为您解答日语学习问题！</div>
-        </div>
-
-        <!-- 今日学习目标 -->
-        <div class="daily-goals">
-            <h2>今日学习目标设定</h2>
-            <div class="goals-grid">
-                <div class="goal-card">
-                    <h4>学习时长</h4>
-                    <input type="number" id="timeGoal" class="goal-input" value="3" min="1" max="12"> 小时
-                    <div class="goal-status goal-pending" id="timeStatus">未完成</div>
-                </div>
-                <div class="goal-card">
-                    <h4>新学词汇</h4>
-                    <input type="number" id="vocabGoal" class="goal-input" value="30" min="0"> 个
-                    <div class="goal-status goal-pending" id="vocabStatus">未完成</div>
-                </div>
-                <div class="goal-card">
-                    <h4>阅读练习</h4>
-                    <input type="number" id="readingGoal" class="goal-input" value="2" min="0"> 篇
-                    <div class="goal-status goal-pending" id="readingStatus">未完成</div>
-                </div>
-                <div class="goal-card">
-                    <h4>听力训练</h4>
-                    <input type="number" id="listeningGoal" class="goal-input" value="30" min="0"> 分钟
-                    <div class="goal-status goal-pending" id="listeningStatus">未完成</div>
-                </div>
-            </div>
-            <div style="text-align: center; margin-top: 15px;">
-                <button class="btn btn-success" onclick="updateDailyGoals()">更新今日目标</button>
+            <h2>AI助手</h2>
+            <input type="text" id="chatInput" placeholder="输入日语学习问题..." style="width: 100%; padding: 10px;">
+            <button onclick="askAI()" style="padding: 10px 20px; background: #667eea; color: white; border: none; border-radius: 5px;">提问</button>
+            <div id="chatResponse" style="margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 5px;">
+                请先设置API密钥，然后就可以提问了
             </div>
         </div>
 
-        <div class="main-grid">
-            <!-- 学习计时器 -->
-            <div class="section">
-                <h2>学习计时器</h2>
-                <div class="timer-display" id="timer">00:00:00</div>
-                <div style="text-align: center;">
-                    <button class="btn btn-primary" onclick="startTimer()">开始学习</button>
-                    <button class="btn btn-secondary" onclick="pauseTimer()">暂停</button>
-                    <button class="btn btn-secondary" onclick="stopTimer()">结束</button>
-                </div>
-                
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <span class="stat-number" id="todayHours">0</span>
-                        <div class="stat-label">今日学习(小时)</div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number" id="totalHours">0</span>
-                        <div class="stat-label">累计学习(小时)</div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number" id="streakDays">0</span>
-                        <div class="stat-label">连续天数</div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number" id="avgDaily">0</span>
-                        <div class="stat-label">日均学习(小时)</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- N2分项学习打卡 -->
-            <div class="section">
-                <h2>N2 分项学习打卡</h2>
-                <div class="study-tabs">
-                    <button class="tab active" onclick="switchTab('vocabulary')">语言知识</button>
-                    <button class="tab" onclick="switchTab('reading')">阅读理解</button>
-                    <button class="tab" onclick="switchTab('listening')">听力理解</button>
-                </div>
-
-                <!-- 语言知识打卡 -->
-                <div class="tab-content active" id="vocabulary-content">
-                    <div class="form-group">
-                        <label>词汇学习类型:</label>
-                        <select id="vocabType">
-                            <option value="n4-review">N4复习词汇</option>
-                            <option value="n3-new">N3新学词汇</option>
-                            <option value="n2-core">N2核心词汇</option>
-                            <option value="kanji">汉字练习</option>
-                        </select>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>新学词汇数:</label>
-                            <input type="number" id="newWords" min="0" placeholder="新学词汇数量">
-                        </div>
-                        <div class="form-group">
-                            <label>复习词汇数:</label>
-                            <input type="number" id="reviewWords" min="0" placeholder="复习词汇数量">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>语法句型数:</label>
-                            <input type="number" id="grammarPatterns" min="0" placeholder="学习语法点数量">
-                        </div>
-                        <div class="form-group">
-                            <label>掌握程度:</label>
-                            <select id="vocabMastery">
-                                <option value="1">初步了解</option>
-                                <option value="2">基本掌握</option>
-                                <option value="3">熟练运用</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>学习内容记录:</label>
-                        <textarea id="vocabContent" placeholder="记录今天学习的重点词汇、语法点、难点等..."></textarea>
-                    </div>
-                    <button class="btn btn-primary" onclick="submitVocabRecord()">提交语言知识打卡</button>
-                </div>
-
-                <!-- 阅读理解打卡 -->
-                <div class="tab-content" id="reading-content">
-                    <div class="form-group">
-                        <label>阅读材料类型:</label>
-                        <select id="readingType">
-                            <option value="short">短文理解 (200-300字)</option>
-                            <option value="medium">中篇文章 (400-600字)</option>
-                            <option value="long">长篇阅读 (600+字)</option>
-                            <option value="news">新闻阅读</option>
-                            <option value="academic">学术文章</option>
-                        </select>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>完成文章数:</label>
-                            <input type="number" id="readingCount" min="0" placeholder="完成文章数量">
-                        </div>
-                        <div class="form-group">
-                            <label>正确率(%):</label>
-                            <input type="number" id="readingAccuracyInput" min="0" max="100" placeholder="答题正确率">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>阅读速度:</label>
-                            <select id="readingSpeed">
-                                <option value="1">较慢</option>
-                                <option value="2">正常</option>
-                                <option value="3">较快</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>理解程度:</label>
-                            <select id="readingComprehension">
-                                <option value="1">基本理解</option>
-                                <option value="2">良好理解</option>
-                                <option value="3">完全理解</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>阅读重点和难点:</label>
-                        <textarea id="readingContent" placeholder="记录阅读的文章主题、遇到的难点、新学的表达等..."></textarea>
-                    </div>
-                    <button class="btn btn-primary" onclick="submitReadingRecord()">提交阅读理解打卡</button>
-                </div>
-
-                <!-- 听力理解打卡 -->
-                <div class="tab-content" id="listening-content">
-                    <div class="form-group">
-                        <label>听力材料类型:</label>
-                        <select id="listeningType">
-                            <option value="daily">日常对话</option>
-                            <option value="classroom">课堂讲解</option>
-                            <option value="news">新闻听力</option>
-                            <option value="announcement">公告广播</option>
-                            <option value="interview">访谈节目</option>
-                        </select>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>练习时长(分钟):</label>
-                            <input type="number" id="listeningDuration" min="0" placeholder="听力练习时长">
-                        </div>
-                        <div class="form-group">
-                            <label>理解正确率(%):</label>
-                            <input type="number" id="listeningAccuracyInput" min="0" max="100" placeholder="理解正确率">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>主要难点:</label>
-                            <select id="listeningDifficulty">
-                                <option value="pronunciation">发音问题</option>
-                                <option value="speed">语速过快</option>
-                                <option value="vocabulary">词汇不熟</option>
-                                <option value="grammar">语法结构</option>
-                                <option value="context">语境理解</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>重听次数:</label>
-                            <select id="listeningRepeats">
-                                <option value="1">1次理解</option>
-                                <option value="2">2次理解</option>
-                                <option value="3">3次理解</option>
-                                <option value="4">4次以上</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>听力学习记录:</label>
-                        <textarea id="listeningContent" placeholder="记录听力材料内容、遇到的困难、改进方法等..."></textarea>
-                    </div>
-                    <button class="btn btn-primary" onclick="submitListeningRecord()">提交听力理解打卡</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- 学习记录 -->
-        <div class="section">
-            <h2>学习记录</h2>
-            <div class="record-list" id="recordList">
-                <!-- 记录将在这里显示 -->
-            </div>
-        </div>
+        <!-- 你的其他功能区域 -->
     </div>
 
     <script>
-        // 全局变量
-        let startTime = null;
-        let elapsedTime = 0;
-        let timerInterval = null;
-        let isRunning = false;
-        let currentTab = 'vocabulary';
-
-        // 页面加载时初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            loadData();
-            updateAllDisplays();
-        });
-
-        // 计时器功能
-        function startTimer() {
-            if (!isRunning) {
-                startTime = Date.now() - elapsedTime;
-                timerInterval = setInterval(updateTimer, 1000);
-                isRunning = true;
-                console.log('计时器已启动');
-            }
-        }
-
-        function pauseTimer() {
-            if (isRunning) {
-                clearInterval(timerInterval);
-                isRunning = false;
-                console.log('计时器已暂停');
-            }
-        }
-
-        function stopTimer() {
-            clearInterval(timerInterval);
-            isRunning = false;
-            
-            if (elapsedTime > 0) {
-                saveStudyTime(elapsedTime);
-                alert('学习时间已保存！');
+        function saveApiKey() {
+            const apiKey = document.getElementById('apiKeyInput').value.trim();
+            if (!apiKey) {
+                alert('请输入API密钥');
+                return;
             }
             
-            elapsedTime = 0;
-            updateTimer();
-            updateAllDisplays();
+            localStorage.setItem('gemini_api_key', apiKey);
+            document.getElementById('apiKeyInput').style.display = 'none';
+            document.querySelector('[onclick="saveApiKey()"]').style.display = 'none';
+            document.getElementById('chatResponse').innerHTML = 'API密钥已保存！现在可以开始提问了';
+            alert('API密钥保存成功！');
         }
 
-        function updateTimer() {
-            if (isRunning) {
-                elapsedTime = Date.now() - startTime;
-            }
-            
-            const totalSeconds = Math.floor(elapsedTime / 1000);
-            const hours = Math.floor(totalSeconds / 3600);
-            const minutes = Math.floor((totalSeconds % 3600) / 60);
-            const seconds = totalSeconds % 60;
-            
-            const display = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            document.getElementById('timer').textContent = display;
-        }
-
-        // 标签切换
-        function switchTab(tabName) {
-            // 隐藏所有标签内容
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            
-            // 移除所有标签的active类
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // 显示选中的标签内容
-            document.getElementById(tabName + '-content').classList.add('active');
-            
-            // 为选中的标签添加active类
-            event.target.classList.add('active');
-            
-            currentTab = tabName;
-            console.log('切换到标签:', tabName);
-        }
-
-        // AI助手功能
         async function askAI() {
-    const question = document.getElementById('chatInput').value;
-    const responseDiv = document.getElementById('chatResponse');
-    
-    if (!question.trim()) {
-        alert('请输入您的问题');
-        return;
-    }
-    
-    responseDiv.innerHTML = '<p>AI助手正在思考中...</p>';
-    
-    try {
-        const response = await fetch('/api/chat', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ question: question })
-        });
-        
-        const data = await response.json();
-        
-        if (response.ok) {
-            responseDiv.innerHTML = `<p><strong>AI助手回答：</strong></p><div style="line-height: 1.6;">${data.response.replace(/\n/g, '<br>')}</div>`;
-        } else {
-            responseDiv.innerHTML = `<p><strong>错误：</strong></p><p>${data.error}</p>`;
-        }
-        
-        document.getElementById('chatInput').value = '';
-        
-    } catch (error) {
-        console.error('请求失败:', error);
-        responseDiv.innerHTML = '<p><strong>网络错误：</strong></p><p>请检查网络连接并重试</p>';
-    }
-}
-
-
-        function getAIResponse(question) {
-            // 简单的关键词匹配回答（实际使用时需要接入真实AI）
-            const responses = {
-                '词汇': '建议使用间隔重复的方法背单词，每天新学30-40个，复习之前学过的50-60个。可以使用Anki等工具制作词汇卡片。',
-                '语法': 'N2语法重点在于理解语法的使用场景和语感。建议多做例句练习，理解每个语法点的细微差别。',
-                '听力': '听力提升需要循序渐进：1)先熟悉发音规律 2)练习关键词捕捉 3)理解语调语气 4)培养语境推理能力。每天至少练习30分钟。',
-                '阅读': '阅读要注意：1)先读题目了解要求 2)快速浏览文章把握大意 3)精读关键段落 4)注意逻辑关系词。多练习不同类型的文章。',
-                '计划': '建议按照您当前的N5水平，重点先巩固N4内容，再逐步过渡到N3和N2。每天3小时的安排很合理。'
-            };
-            
-            for (let key in responses) {
-                if (question.includes(key)) {
-                    return `<p><strong>AI助手回答：</strong></p><p>${responses[key]}</p>`;
-                }
-            }
-            
-            return '<p><strong>AI助手回答：</strong></p><p>这是一个很好的问题！建议您可以：1)制定具体的学习计划 2)多练习真题 3)坚持每日复习 4)找到适合自己的学习方法。如果有具体的词汇、语法、听力或阅读问题，可以更具体地提问哦！</p>';
-        }
-
-        // 保存学习时间
-        function saveStudyTime(timeMs) {
-            const today = new Date().toDateString();
-            let studyData = JSON.parse(localStorage.getItem('studyData') || '{}');
-            
-            if (!studyData[today]) {
-                studyData[today] = { 
-                    totalTime: 0, 
-                    records: [],
-                    vocabCount: 0,
-                    readingCount: 0,
-                    listeningTime: 0
-                };
-            }
-            
-            studyData[today].totalTime += timeMs;
-            localStorage.setItem('studyData', JSON.stringify(studyData));
-        }
-
-        // 提交各类学习记录
-        function submitVocabRecord() {
-            const data = {
-                type: 'vocabulary',
-                vocabType: document.getElementById('vocabType').value,
-                newWords: parseInt(document.getElementById('newWords').value) || 0,
-                reviewWords: parseInt(document.getElementById('reviewWords').value) || 0,
-                grammarPatterns: parseInt(document.getElementById('grammarPatterns').value) || 0,
-                mastery: document.getElementById('vocabMastery').value,
-                content: document.getElementById('vocabContent').value
-            };
-            
-            if (!data.content.trim() && data.newWords === 0 && data.grammarPatterns === 0) {
-                alert('请填写学习内容或数量');
+            const apiKey = localStorage.getItem('gemini_api_key');
+            if (!apiKey) {
+                alert('请先设置API密钥');
                 return;
             }
-            
-            saveRecord(data);
-            clearVocabForm();
-            alert('语言知识打卡成功！');
-        }
 
-        function submitReadingRecord() {
-            const data = {
-                type: 'reading',
-                readingType: document.getElementById('readingType').value,
-                count: parseInt(document.getElementById('readingCount').value) || 0,
-                accuracy: parseInt(document.getElementById('readingAccuracyInput').value) || 0,
-                speed: document.getElementById('readingSpeed').value,
-                comprehension: document.getElementById('readingComprehension').value,
-                content: document.getElementById('readingContent').value
-            };
-            
-            if (!data.content.trim() && data.count === 0) {
-                alert('请填写学习内容或完成数量');
+            const question = document.getElementById('chatInput').value;
+            if (!question.trim()) {
+                alert('请输入问题');
                 return;
             }
-            
-            saveRecord(data);
-            clearReadingForm();
-            alert('阅读理解打卡成功！');
-        }
 
-        function submitListeningRecord() {
-            const data = {
-                type: 'listening',
-                listeningType: document.getElementById('listeningType').value,
-                duration: parseInt(document.getElementById('listeningDuration').value) || 0,
-                accuracy: parseInt(document.getElementById('listeningAccuracyInput').value) || 0,
-                difficulty: document.getElementById('listeningDifficulty').value,
-                repeats: document.getElementById('listeningRepeats').value,
-                content: document.getElementById('listeningContent').value
-            };
-            
-            if (!data.content.trim() && data.duration === 0) {
-                alert('请填写学习内容或练习时长');
-                return;
-            }
-            
-            saveRecord(data);
-            clearListeningForm();
-            alert('听力理解打卡成功！');
-        }
+            const responseDiv = document.getElementById('chatResponse');
+            responseDiv.innerHTML = 'AI思考中...';
 
-        function saveRecord(data) {
-            const today = new Date().toDateString();
-            let studyData = JSON.parse(localStorage.getItem('studyData') || '{}');
-            
-            if (!studyData[today]) {
-                studyData[today] = { 
-                    totalTime: 0, 
-                    records: [],
-                    vocabCount: 0,
-                    readingCount: 0,
-                    listeningTime: 0
-                };
-            }
-            
-            data.timestamp = new Date().toTimeString().slice(0, 5);
-            studyData[today].records.push(data);
-            
-            // 更新统计数据
-            if (data.type === 'vocabulary') {
-                studyData[today].vocabCount += data.newWords + data.reviewWords;
-            } else if (data.type === 'reading') {
-                studyData[today].readingCount += data.count;
-            } else if (data.type === 'listening') {
-                studyData[today].listeningTime += data.duration;
-            }
-            
-            localStorage.setItem('studyData', JSON.stringify(studyData));
-            updateAllDisplays();
-        }
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `你是日语学习助手，请回答：${question}`
+                            }]
+                        }]
+                    })
+                });
 
-        // 清空表单
-        function clearVocabForm() {
-            document.getElementById('newWords').value = '';
-            document.getElementById('reviewWords').value = '';
-            document.getElementById('grammarPatterns').value = '';
-            document.getElementById('vocabContent').value = '';
-        }
-
-                function clearReadingForm() {
-            document.getElementById('readingCount').value = '';
-            document.getElementById('readingAccuracyInput').value = '';
-            document.getElementById('readingContent').value = '';
-        }
-
-        function clearListeningForm() {
-            document.getElementById('listeningDuration').value = '';
-            document.getElementById('listeningAccuracyInput').value = '';
-            document.getElementById('listeningContent').value = '';
-        }
-
-        // 更新每日目标
-        function updateDailyGoals() {
-            const goals = {
-                time: parseInt(document.getElementById('timeGoal').value) || 3,
-                vocab: parseInt(document.getElementById('vocabGoal').value) || 30,
-                reading: parseInt(document.getElementById('readingGoal').value) || 2,
-                listening: parseInt(document.getElementById('listeningGoal').value) || 30
-            };
-            
-            localStorage.setItem('dailyGoals', JSON.stringify(goals));
-            checkGoalProgress();
-            alert('今日目标已更新！');
-        }
-
-        // 检查目标完成情况
-        function checkGoalProgress() {
-            const goals = JSON.parse(localStorage.getItem('dailyGoals') || '{"time":3,"vocab":30,"reading":2,"listening":30}');
-            const today = new Date().toDateString();
-            const studyData = JSON.parse(localStorage.getItem('studyData') || '{}');
-            const todayData = studyData[today] || { totalTime: 0, vocabCount: 0, readingCount: 0, listeningTime: 0 };
-            
-            // 检查时间目标
-            const currentHours = (todayData.totalTime + elapsedTime) / 3600000;
-            updateGoalStatus('timeStatus', currentHours >= goals.time);
-            
-            // 检查词汇目标
-            updateGoalStatus('vocabStatus', todayData.vocabCount >= goals.vocab);
-            
-            // 检查阅读目标
-            updateGoalStatus('readingStatus', todayData.readingCount >= goals.reading);
-            
-            // 检查听力目标
-            updateGoalStatus('listeningStatus', todayData.listeningTime >= goals.listening);
-        }
-
-        function updateGoalStatus(statusId, completed) {
-            const statusElement = document.getElementById(statusId);
-            if (completed) {
-                statusElement.textContent = '已完成';
-                statusElement.className = 'goal-status goal-completed';
-            } else {
-                statusElement.textContent = '未完成';
-                statusElement.className = 'goal-status goal-pending';
-            }
-        }
-
-        // 更新所有显示数据
-        function updateAllDisplays() {
-            const studyData = JSON.parse(localStorage.getItem('studyData') || '{}');
-            const today = new Date().toDateString();
-            
-            // 更新统计数据
-            const todayData = studyData[today] || { totalTime: 0, vocabCount: 0, readingCount: 0, listeningTime: 0 };
-            const todayHours = (todayData.totalTime + elapsedTime) / 3600000;
-            document.getElementById('todayHours').textContent = todayHours.toFixed(1);
-            
-            let totalHours = 0;
-            let totalDays = 0;
-            Object.values(studyData).forEach(day => {
-                totalHours += day.totalTime / 3600000;
-                if (day.totalTime > 0) totalDays++;
-            });
-            document.getElementById('totalHours').textContent = totalHours.toFixed(0);
-            
-            // 连续学习天数
-            let streakDays = 0;
-            let currentDate = new Date();
-            while (true) {
-                const dateStr = currentDate.toDateString();
-                if (studyData[dateStr] && studyData[dateStr].totalTime > 0) {
-                    streakDays++;
-                    currentDate.setDate(currentDate.getDate() - 1);
+                const data = await response.json();
+                if (data.candidates && data.candidates[0]) {
+                    responseDiv.innerHTML = data.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
                 } else {
-                    break;
+                    responseDiv.innerHTML = 'API调用失败，请检查密钥';
                 }
+            } catch (error) {
+                responseDiv.innerHTML = '网络错误：' + error.message;
             }
-            document.getElementById('streakDays').textContent = streakDays;
-            
-            // 日均学习时长
-            const avgDaily = totalDays > 0 ? totalHours / totalDays : 0;
-            document.getElementById('avgDaily').textContent = avgDaily.toFixed(1);
-            
-            // 更新记录列表
-            updateRecordList();
-            
-            // 检查目标进度
-            checkGoalProgress();
+
+            document.getElementById('chatInput').value = '';
         }
 
-        function updateRecordList() {
-            const studyData = JSON.parse(localStorage.getItem('studyData') || '{}');
-            const recordList = document.getElementById('recordList');
-            
-            recordList.innerHTML = '';
-            
-            const sortedDates = Object.keys(studyData).sort((a, b) => new Date(b) - new Date(a));
-            
-            sortedDates.slice(0, 10).forEach(dateStr => {
-                const dayData = studyData[dateStr];
-                const date = new Date(dateStr);
-                
-                if (dayData.records && dayData.records.length > 0) {
-                    dayData.records.forEach(record => {
-                        const item = document.createElement('div');
-                        item.className = `record-item ${record.type}`;
-                        
-                        const typeNames = {
-                            vocabulary: '语言知识',
-                            reading: '阅读理解', 
-                            listening: '听力理解'
-                        };
-                        
-                        let details = '';
-                        if (record.type === 'vocabulary') {
-                            details = `新学词汇:${record.newWords}个 | 复习词汇:${record.reviewWords}个 | 语法:${record.grammarPatterns}个`;
-                        } else if (record.type === 'reading') {
-                            details = `完成文章:${record.count}篇 | 正确率:${record.accuracy}%`;
-                        } else if (record.type === 'listening') {
-                            details = `练习时长:${record.duration}分钟 | 正确率:${record.accuracy}%`;
-                        }
-                        
-                        item.innerHTML = `
-                            <div class="record-date">
-                                ${typeNames[record.type]} | ${date.getMonth() + 1}月${date.getDate()}日 ${record.timestamp}
-                            </div>
-                            <div>
-                                ${record.content}
-                                ${details ? ` | ${details}` : ''}
-                            </div>
-                        `;
-                        
-                        recordList.appendChild(item);
-                    });
-                }
-            });
-        }
-
-        function loadData() {
-            // 加载保存的目标设置
-            const goals = JSON.parse(localStorage.getItem('dailyGoals') || '{"time":3,"vocab":30,"reading":2,"listening":30}');
-            document.getElementById('timeGoal').value = goals.time;
-            document.getElementById('vocabGoal').value = goals.vocab;
-            document.getElementById('readingGoal').value = goals.reading;
-            document.getElementById('listeningGoal').value = goals.listening;
-        }
-
-        // 每秒更新计时器和目标检查
-        setInterval(() => {
-            if (isRunning) {
-                updateTimer();
-                checkGoalProgress();
+        // 页面加载时检查是否已有密钥
+        document.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('gemini_api_key')) {
+                document.getElementById('apiKeyInput').style.display = 'none';
+                document.querySelector('[onclick="saveApiKey()"]').style.display = 'none';
+                document.getElementById('chatResponse').innerHTML = 'API密钥已设置，可以开始提问！';
             }
-        }, 1000);
+        });
     </script>
 </body>
 </html>
