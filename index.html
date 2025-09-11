@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI助手 - Gemini集成</title>
     <style>
+        /* 保持原有CSS样式不变 */
         * {
             margin: 0;
             padding: 0;
@@ -156,6 +157,14 @@
         .hidden {
             display: none;
         }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
@@ -199,6 +208,14 @@
         const sendButton = document.getElementById('sendButton');
         const apiKeyContainer = document.getElementById('apiKeyContainer');
         const apiKeyInput = document.getElementById('apiKeyInput');
+
+        // 可用的CORS代理列表
+        const corsProxies = [
+            'https://cors-anywhere.herokuapp.com/',
+            'https://api.allorigins.win/raw?url=',
+            'https://corsproxy.io/?'
+        ];
+        let currentProxyIndex = 0;
 
         // 检查本地存储的API Key
         window.onload = function() {
@@ -269,11 +286,27 @@
             sendButton.disabled = true;
             showLoading();
 
+            await tryApiCall(message);
+        }
+
+        async function tryApiCall(message, proxyIndex = 0) {
+            if (proxyIndex >= corsProxies.length) {
+                hideLoading();
+                addMessage('AI助手', '❌ 所有代理都无法连接，请稍后重试或检查网络连接。', 'ai-message');
+                sendButton.disabled = false;
+                return;
+            }
+
+            const proxy = corsProxies[proxyIndex];
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+            const proxyUrl = proxy + encodeURIComponent(apiUrl);
+
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+                const response = await fetch(proxyUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
                     },
                     body: JSON.stringify({
                         contents: [{
@@ -290,13 +323,12 @@
                     })
                 });
 
-                hideLoading();
-
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
 
                 const data = await response.json();
+                hideLoading();
                 
                 if (data.candidates && data.candidates[0] && data.candidates[0].content) {
                     const aiResponse = data.candidates[0].content.parts[0].text;
@@ -306,15 +338,16 @@
                 }
 
             } catch (error) {
-                hideLoading();
-                console.error('Error:', error);
-                addMessage('AI助手', `发生错误: ${error.message}。请检查您的 API Key 是否正确。`, 'ai-message');
-            } finally {
-                sendButton.disabled = false;
+                console.error(`代理 ${proxyIndex + 1} 失败:`, error);
+                // 尝试下一个代理
+                await tryApiCall(message, proxyIndex + 1);
+                return;
             }
+            
+            sendButton.disabled = false;
         }
 
-        // 清除API Key的功能（可选）
+        // 清除API Key的功能
         function clearApiKey() {
             localStorage.removeItem('gemini_api_key');
             apiKey = '';
@@ -322,7 +355,6 @@
             addMessage('系统', '🔄 API Key 已清除，请重新设置', 'ai-message');
         }
 
-        // 在控制台中添加清除API Key的方法
         window.clearApiKey = clearApiKey;
     </script>
 </body>
