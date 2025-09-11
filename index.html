@@ -3,589 +3,274 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JLPT N2 完整学习系统</title>
+    <title>AI助手 - Gemini集成</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        * {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
+
         .container {
-            max-width: 1400px;
-            margin: 0 auto;
             background: white;
             border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 800px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
+
         .header {
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 20px;
             text-align: center;
-            margin-bottom: 30px;
         }
+
         .header h1 {
-            color: #333;
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-        .countdown {
-            background: linear-gradient(45deg, #ff6b6b, #ffa500);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            text-align: center;
-            font-size: 1.2em;
-            margin-bottom: 20px;
-        }
-        .ai-chat {
-            background: #f0f8ff;
-            border: 2px solid #b0d4ff;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-        .chat-input {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #ccc;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            box-sizing: border-box;
-        }
-        .chat-response {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 15px;
-            border-left: 4px solid #667eea;
-            min-height: 100px;
-            line-height: 1.6;
-        }
-        .daily-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-        .daily-card {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            border: 2px solid #e9ecef;
-        }
-        .daily-goals {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            border: 2px solid #e9ecef;
-            margin-bottom: 30px;
-        }
-        .goals-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-top: 15px;
-        }
-        .goal-card {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            border: 2px solid #dee2e6;
-            text-align: center;
-        }
-        .goal-input {
-            width: 60px;
-            text-align: center;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            padding: 5px;
-        }
-        .goal-status {
-            margin-top: 10px;
-            padding: 5px;
-            border-radius: 15px;
-            font-size: 0.9em;
-            font-weight: bold;
-        }
-        .goal-completed {
-            background: #d4edda;
-            color: #155724;
-        }
-        .goal-pending {
-            background: #fff3cd;
-            color: #856404;
-        }
-        .main-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-        .section {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            border: 2px solid #e9ecef;
-        }
-        .section h2 {
-            color: #495057;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #667eea;
-            padding-bottom: 10px;
-        }
-        .timer-display {
-            font-size: 3em;
-            color: #667eea;
-            text-align: center;
-            margin: 20px 0;
-            font-weight: bold;
-        }
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1em;
-            margin: 5px;
-            transition: all 0.3s ease;
-        }
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-        }
-        .btn-primary:hover {
-            transform: translateY(-2px);
-        }
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
-        }
-        .stat-card {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid #dee2e6;
-        }
-        .stat-number {
-            font-size: 2em;
-            color: #667eea;
-            font-weight: bold;
-            display: block;
-        }
-        .stat-label {
-            color: #6c757d;
-            font-size: 0.9em;
-            margin-top: 5px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
             margin-bottom: 5px;
-            font-weight: bold;
-            color: #495057;
         }
-        .form-group input, .form-group select, .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #dee2e6;
-            border-radius: 5px;
-            box-sizing: border-box;
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
         }
-        .form-group textarea {
-            height: 80px;
-            resize: vertical;
-        }
-        .quiz-section {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 10px;
-            border: 2px solid #e9ecef;
-            margin-bottom: 30px;
-        }
-        .quiz-question {
-            background: white;
+
+        .chat-container {
+            flex: 1;
             padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border-left: 4px solid #667eea;
-        }
-        .quiz-options {
-            margin: 15px 0;
-        }
-        .quiz-option {
-            display: block;
-            margin: 8px 0;
-            padding: 10px;
-            background: #f8f9fa;
-            border: 2px solid #dee2e6;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .quiz-option:hover {
-            background: #e9ecef;
-        }
-        .quiz-option.selected {
-            background: #cce7ff;
-            border-color: #667eea;
-        }
-        .quiz-option.correct {
-            background: #d4edda;
-            border-color: #28a745;
-        }
-        .quiz-option.incorrect {
-            background: #f8d7da;
-            border-color: #dc3545;
-        }
-        .record-list {
-            max-height: 400px;
             overflow-y: auto;
-            margin-top: 20px;
+            background: #f8f9fa;
         }
-        .record-item {
-            background: white;
+
+        .message {
+            margin: 10px 0;
             padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-        }
-        .record-date {
-            font-size: 0.9em;
-            color: #6c757d;
-            margin-bottom: 5px;
-        }
-        .vocab-card, .grammar-card {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #48bb78;
-        }
-        .pronunciation-practice {
-            background: #fff5f5;
-            border: 2px solid #fed7d7;
-            padding: 20px;
             border-radius: 10px;
-            margin-bottom: 30px;
+            max-width: 80%;
+            word-wrap: break-word;
         }
-        .practice-card {
+
+        .user-message {
+            background: #007bff;
+            color: white;
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .ai-message {
             background: white;
+            border: 1px solid #e0e0e0;
+            color: #333;
+        }
+
+        .input-container {
             padding: 20px;
-            border-radius: 8px;
-            text-align: center;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
         }
-        .pronunciation-feedback {
-            margin-top: 15px;
-            padding: 15px;
-            border-radius: 8px;
-            border: 2px solid #ddd;
+
+        .message-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            font-size: 16px;
         }
-        @media (max-width: 768px) {
-            .main-grid, .daily-content {
-                grid-template-columns: 1fr;
-            }
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-            .goals-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+
+        .send-button {
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .send-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .send-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #666;
+        }
+
+        .loading-dots {
+            display: inline-block;
+        }
+
+        .loading-dots::after {
+            content: '';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60% { content: '...'; }
+            80%, 100% { content: ''; }
+        }
+
+        .api-key-input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .api-key-container {
+            padding: 20px;
+            background: #fff3cd;
+            border-top: 1px solid #ffeaa7;
+        }
+
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>JLPT N2 完整学习系统</h1>
-            <div class="countdown">
-                <strong>距离N2考试还有：<span id="daysLeft">60</span> 天</strong>
+            <h1>🤖 AI助手</h1>
+            <p>基于 Google Gemini 的智能对话系统</p>
+        </div>
+
+        <div class="api-key-container" id="apiKeyContainer">
+            <h3>⚠️ 请输入您的 Gemini API Key</h3>
+            <input type="password" id="apiKeyInput" class="api-key-input" placeholder="输入您的 Gemini API Key">
+            <button onclick="setApiKey()" class="send-button">确认</button>
+            <p style="font-size: 12px; color: #666; margin-top: 10px;">
+                API Key 将保存在浏览器本地，不会上传到服务器
+            </p>
+        </div>
+
+        <div class="chat-container" id="chatContainer">
+            <div class="message ai-message">
+                <strong>AI助手:</strong> 你好！我是基于 Gemini 的AI助手，有什么可以帮助你的吗？
             </div>
         </div>
 
-        <!-- AI学习助手 -->
-        <div class="ai-chat">
-            <h2>日语学习AI助手</h2>
-            <input type="password" id="apiKeyInput" placeholder="首次使用请输入您的Gemini API密钥" style="width: 100%; margin-bottom: 10px; padding: 10px; border: 2px solid #ccc; border-radius: 5px;">
-            <input type="text" id="chatInput" class="chat-input" placeholder="输入您的日语学习问题..." />
-            <button class="btn btn-primary" onclick="askAI()">询问AI</button>
-            <button class="btn btn-secondary" onclick="clearApiKey()">重置API密钥</button>
-            <div class="chat-response" id="chatResponse">请输入API密钥后就可以开始提问了！</div>
-        </div>
-
-        <!-- 每日学习内容 -->
-        <div class="daily-content">
-            <div class="daily-card">
-                <h3>每日一词</h3>
-                <div id="dailyVocab">
-                    <div class="vocab-card">
-                        <h4>効果 (こうか)</h4>
-                        <p><strong>意思：</strong>效果，效应</p>
-                        <p><strong>例句：</strong>この薬は効果がある。</p>
-                        <p><em>这个药很有效果。</em></p>
-                    </div>
-                </div>
-                <button class="btn btn-primary" onclick="loadDailyVocab()">换一个词汇</button>
-            </div>
-            <div class="daily-card">
-                <h3>每日语法</h3>
-                <div id="dailyGrammar">
-                    <div class="grammar-card">
-                        <h4>～にしては</h4>
-                        <p><strong>意思：</strong>就...而言，虽然是...但是</p>
-                        <p><strong>用法：</strong>表示与预期不符的情况</p>
-                        <p><strong>例句：</strong>彼は初心者にしては上手だ。</p>
-                        <p><em>他作为初学者来说很厉害。</em></p>
-                    </div>
-                </div>
-                <button class="btn btn-primary" onclick="loadDailyGrammar()">换一个语法</button>
-            </div>
-        </div>
-
-        <!-- 今日学习目标 -->
-        <div class="daily-goals">
-            <h2>今日学习目标设定</h2>
-            <div class="goals-grid">
-                <div class="goal-card">
-                    <h4>学习时长</h4>
-                    <input type="number" id="timeGoal" class="goal-input" value="3" min="1" max="12"> 小时
-                    <div class="goal-status goal-pending" id="timeStatus">未完成</div>
-                </div>
-                <div class="goal-card">
-                    <h4>新学词汇</h4>
-                    <input type="number" id="vocabGoal" class="goal-input" value="30" min="0"> 个
-                    <div class="goal-status goal-pending" id="vocabStatus">未完成</div>
-                </div>
-                <div class="goal-card">
-                    <h4>阅读练习</h4>
-                    <input type="number" id="readingGoal" class="goal-input" value="2" min="0"> 篇
-                    <div class="goal-status goal-pending" id="readingStatus">未完成</div>
-                </div>
-                <div class="goal-card">
-                    <h4>听力训练</h4>
-                    <input type="number" id="listeningGoal" class="goal-input" value="30" min="0"> 分钟
-                    <div class="goal-status goal-pending" id="listeningStatus">未完成</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="main-grid">
-            <!-- 学习计时器 -->
-            <div class="section">
-                <h2>学习计时器</h2>
-                <div class="timer-display" id="timer">00:00:00</div>
-                <div style="text-align: center;">
-                    <button class="btn btn-primary" onclick="startTimer()">开始学习</button>
-                    <button class="btn btn-secondary" onclick="pauseTimer()">暂停</button>
-                    <button class="btn btn-secondary" onclick="stopTimer()">结束</button>
-                </div>
-                
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <span class="stat-number" id="todayHours">0</span>
-                        <div class="stat-label">今日学习(小时)</div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number" id="totalHours">0</span>
-                        <div class="stat-label">累计学习(小时)</div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number" id="streakDays">0</span>
-                        <div class="stat-label">连续天数</div>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-number" id="avgDaily">0</span>
-                        <div class="stat-label">日均学习(小时)</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 学习打卡 -->
-            <div class="section">
-                <h2>学习内容打卡</h2>
-                <div class="form-group">
-                    <label>学习类型:</label>
-                    <select id="studyType">
-                        <option value="vocabulary">词汇学习</option>
-                        <option value="grammar">语法练习</option>
-                        <option value="reading">阅读理解</option>
-                        <option value="listening">听力训练</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label>学习内容:</label>
-                    <textarea id="studyContent" placeholder="记录今天的学习内容..."></textarea>
-                </div>
-                
-                <div class="form-group">
-                    <label>新学单词数:</label>
-                    <input type="number" id="wordCount" placeholder="新学了多少个单词">
-                </div>
-                
-                <button class="btn btn-primary" onclick="submitRecord()">提交打卡</button>
-            </div>
-        </div>
-
-        <!-- N2模拟题 -->
-        <div class="quiz-section">
-            <h2>N2模拟题练习</h2>
-            <div style="margin-bottom: 20px;">
-                <button class="btn btn-primary" onclick="startQuiz('vocabulary')">词汇题</button>
-                <button class="btn btn-primary" onclick="startQuiz('grammar')">语法题</button>
-                <button class="btn btn-secondary" onclick="showQuizResult()">查看成绩</button>
-            </div>
-            <div id="quizContainer"></div>
-        </div>
-
-        <!-- 发音练习 -->
-        <div class="pronunciation-practice">
-            <h2>发音练习</h2>
-            <div class="practice-card">
-                <h3 id="practiceWord" style="font-size: 2em; color: #667eea;">こんにちは</h3>
-                <p id="practiceReading" style="font-size: 1.2em; color: #666;">konnichiwa</p>
-                <p id="practiceMeaning" style="font-size: 1.1em; color: #333;">你好</p>
-                
-                <div style="margin: 20px 0;">
-                    <button class="btn btn-primary" onclick="startRecording()">开始录音</button>
-                    <button class="btn btn-secondary" onclick="stopRecording()">停止录音</button>
-                    <button class="btn btn-secondary" onclick="playReference()">标准发音</button>
-                    <button class="btn btn-success" onclick="changeWord()">换个单词</button>
-                </div>
-                
-                <div id="pronunciationResult"></div>
-            </div>
-        </div>
-
-        <!-- 学习记录 -->
-        <div class="section">
-            <h2>学习记录</h2>
-            <div class="record-list" id="recordList">
-                <!-- 记录将在这里显示 -->
-            </div>
+        <div class="input-container">
+            <input 
+                type="text" 
+                id="messageInput" 
+                class="message-input" 
+                placeholder="输入您的问题..."
+                onkeypress="handleKeyPress(event)"
+            >
+            <button onclick="sendMessage()" id="sendButton" class="send-button">发送</button>
         </div>
     </div>
 
     <script>
-        // 全局变量
-        let startTime = null;
-        let elapsedTime = 0;
-        let timerInterval = null;
-        let isRunning = false;
-        let currentQuiz = null;
-        let quizScore = 0;
-        let recognition;
-        let isRecording = false;
-        let currentWord = 'こんにちは';
+        let apiKey = '';
+        const chatContainer = document.getElementById('chatContainer');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const apiKeyContainer = document.getElementById('apiKeyContainer');
+        const apiKeyInput = document.getElementById('apiKeyInput');
 
-        // 词汇和语法数据库
-        const vocabDatabase = [
-            { word: "効果", reading: "こうか", meaning: "效果，效应", example: "この薬は効果がある。", exampleMeaning: "这个药很有效果。" },
-            { word: "影響", reading: "えいきょう", meaning: "影响", example: "環境が健康に影響する。", exampleMeaning: "环境对健康有影响。" },
-            { word: "経験", reading: "けいけん", meaning: "经验", example: "彼は経験が豊富だ。", exampleMeaning: "他经验丰富。" },
-            { word: "機会", reading: "きかい", meaning: "机会", example: "いい機会を逃した。", exampleMeaning: "错过了好机会。" },
-            { word: "条件", reading: "じょうけん", meaning: "条件", example: "条件が合わない。", exampleMeaning: "条件不合适。" }
-        ];
-
-        const grammarDatabase = [
-            { pattern: "～にしては", meaning: "就...而言，虽然是...但是", usage: "表示与预期不符的情况", example: "彼は初心者にしては上手だ。", exampleMeaning: "他作为初学者来说很厉害。" },
-            { pattern: "～ばかりか", meaning: "不仅...而且", usage: "表示递进关系", example: "雨ばかりか雪も降った。", exampleMeaning: "不仅下雨而且还下雪了。" },
-            { pattern: "～わけではない", meaning: "并不是说...", usage: "表示部分否定", example: "嫌いなわけではない。", exampleMeaning: "并不是说讨厌。" },
-            { pattern: "～にもかかわらず", meaning: "尽管...但是", usage: "表示逆接", example: "雨にもかかわらず出かけた。", exampleMeaning: "尽管下雨但还是出门了。" }
-        ];
-
-        const quizData = {
-            vocabulary: [
-                {
-                    question: "次の文の（　）に入る最もよいものを選びなさい。\n\nこの薬はとても（　）がある。",
-                    options: ["1. 効果", "2. 影響", "3. 経験", "4. 機会"],
-                    correct: 0,
-                    explanation: "「効果がある」は「有效果」的意思，符合句意。"
-                },
-                {
-                    question: "次の文の（　）に入る最もよいものを選びなさい。\n\n環境が健康に（　）を与える。",
-                    options: ["1. 効果", "2. 影響", "3. 条件", "4. 機会"],
-                    correct: 1,
-                    explanation: "「影響を与える」表示「产生影响」。"
-                }
-            ],
-            grammar: [
-                {
-                    question: "次の文の（　）に入る最もよいものを選びなさい。\n\n雨が降っている（　）、試合は続行された。",
-                    options: ["1. にもかかわらず", "2. ばかりか", "3. わけではない", "4. にしては"],
-                    correct: 0,
-                    explanation: "「にもかかわらず」表示逆接，「尽管下雨但比赛继续进行」。"
-                }
-            ]
+        // 检查本地存储的API Key
+        window.onload = function() {
+            const savedApiKey = localStorage.getItem('gemini_api_key');
+            if (savedApiKey) {
+                apiKey = savedApiKey;
+                apiKeyContainer.classList.add('hidden');
+            }
         };
 
-        const practiceWords = [
-            { word: 'こんにちは', reading: 'konnichiwa', meaning: '你好' },
-            { word: 'ありがとう', reading: 'arigatou', meaning: '谢谢' },
-            { word: 'すみません', reading: 'sumimasen', meaning: '对不起' },
-            { word: 'おはよう', reading: 'ohayou', meaning: '早上好' },
-            { word: 'こんばんは', reading: 'konbanwa', meaning: '晚上好' }
-        ];
-
-        // 页面初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            loadData();
-            updateAllDisplays();
-            initializeSpeechRecognition();
-            
-            // 检查保存的API密钥
-            const savedKey = localStorage.getItem('gemini_api_key');
-            if (savedKey) {
-                document.getElementById('apiKeyInput').style.display = 'none';
-                document.getElementById('chatResponse').innerHTML = 'AI助手已就绪，可以开始提问！';
+        function setApiKey() {
+            const key = apiKeyInput.value.trim();
+            if (key) {
+                apiKey = key;
+                localStorage.setItem('gemini_api_key', key);
+                apiKeyContainer.classList.add('hidden');
+                addMessage('系统', '✅ API Key 已设置成功！', 'ai-message');
+            } else {
+                alert('请输入有效的 API Key');
             }
-            
-            // 回车键提交
-            document.getElementById('chatInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    askAI();
-                }
-            });
-        });
+        }
 
-        // AI助手功能
-        async function askAI() {
-            let apiKey = localStorage.getItem('gemini_api_key');
-            
+        function handleKeyPress(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessage();
+            }
+        }
+
+        function addMessage(sender, content, className) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${className}`;
+            messageDiv.innerHTML = `<strong>${sender}:</strong> ${content}`;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function showLoading() {
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = 'message ai-message loading';
+            loadingDiv.id = 'loadingMessage';
+            loadingDiv.innerHTML = '<strong>AI助手:</strong> <span class="loading-dots">正在思考</span>';
+            chatContainer.appendChild(loadingDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function hideLoading() {
+            const loadingMessage = document.getElementById('loadingMessage');
+            if (loadingMessage) {
+                loadingMessage.remove();
+            }
+        }
+
+        async function sendMessage() {
             if (!apiKey) {
-                apiKey = document.getElementById('apiKeyInput').value;
-                if (!apiKey) {
-                    alert('请先输入API密钥');
-                    return;
-                }
-                localStorage.setItem('gemini_api_key', apiKey);
-                document.getElementById('apiKeyInput').style.display = 'none';
-            }
-
-            const question = document.getElementById('chatInput').value;
-            const responseDiv = document.getElementById('chatResponse');
-            
-            if (!question.trim()) {
-                alert('请输入您的问题');
+                alert('请先设置 API Key');
                 return;
             }
+
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            // 添加用户消息
+            addMessage('你', message, 'user-message');
+            messageInput.value = '';
             
-            responseDiv.innerHTML = '<p>AI助手正在思考中...</p>';
-            
+            // 禁用发送按钮并显示加载状态
+            sendButton.disabled = true;
+            showLoading();
+
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -593,418 +278,52 @@
                     body: JSON.stringify({
                         contents: [{
                             parts: [{
-                                text: `你是一个专业的日语学习助手，专门帮助学生准备JLPT N2考试。请用中文回答以下日语学习问题：\n\n${question}`
+                                text: message
                             }]
-                        }]
+                        }],
+                        generationConfig: {
+                            temperature: 0.7,
+                            topK: 40,
+                            topP: 0.95,
+                            maxOutputTokens: 1024,
+                        }
                     })
                 });
-                
+
+                hideLoading();
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
                 const data = await response.json();
                 
-                if (response.ok && data.candidates && data.candidates[0]) {
+                if (data.candidates && data.candidates[0] && data.candidates[0].content) {
                     const aiResponse = data.candidates[0].content.parts[0].text;
-                    responseDiv.innerHTML = `<p><strong>AI助手回答：</strong></p><div>${aiResponse.replace(/\n/g, '<br>')}</div>`;
+                    addMessage('AI助手', aiResponse, 'ai-message');
                 } else {
-                    responseDiv.innerHTML = '<p><strong>错误：</strong></p><p>AI调用失败，请检查API密钥是否正确</p>';
+                    addMessage('AI助手', '抱歉，我无法生成回复。请重试。', 'ai-message');
                 }
-                
-                document.getElementById('chatInput').value = '';
-                
+
             } catch (error) {
-                console.error('请求失败:', error);
-                responseDiv.innerHTML = '<p><strong>网络错误：</strong></p><p>请检查网络连接或API密钥</p>';
+                hideLoading();
+                console.error('Error:', error);
+                addMessage('AI助手', `发生错误: ${error.message}。请检查您的 API Key 是否正确。`, 'ai-message');
+            } finally {
+                sendButton.disabled = false;
             }
         }
 
+        // 清除API Key的功能（可选）
         function clearApiKey() {
             localStorage.removeItem('gemini_api_key');
-            document.getElementById('apiKeyInput').style.display = 'block';
-            document.getElementById('apiKeyInput').value = '';
-            document.getElementById('chatResponse').innerHTML = '请重新输入API密钥';
+            apiKey = '';
+            apiKeyContainer.classList.remove('hidden');
+            addMessage('系统', '🔄 API Key 已清除，请重新设置', 'ai-message');
         }
 
-        // 每日词汇和语法功能
-        function loadDailyVocab() {
-            const randomIndex = Math.floor(Math.random() * vocabDatabase.length);
-            const vocab = vocabDatabase[randomIndex];
-            
-            document.getElementById('dailyVocab').innerHTML = `
-                <div class="vocab-card">
-                    <h4>${vocab.word} (${vocab.reading})</h4>
-                    <p><strong>意思：</strong>${vocab.meaning}</p>
-                    <p><strong>例句：</strong>${vocab.example}</p>
-                    <p><em>${vocab.exampleMeaning}</em></p>
-                </div>
-            `;
-        }
-
-        function loadDailyGrammar() {
-            const randomIndex = Math.floor(Math.random() * grammarDatabase.length);
-            const grammar = grammarDatabase[randomIndex];
-            
-            document.getElementById('dailyGrammar').innerHTML = `
-                <div class="grammar-card">
-                    <h4>${grammar.pattern}</h4>
-                    <p><strong>意思：</strong>${grammar.meaning}</p>
-                    <p><strong>用法：</strong>${grammar.usage}</p>
-                    <p><strong>例句：</strong>${grammar.example}</p>
-                    <p><em>${grammar.exampleMeaning}</em></p>
-                </div>
-            `;
-        }
-
-        // 计时器功能
-        function startTimer() {
-            if (!isRunning) {
-                startTime = Date.now() - elapsedTime;
-                timerInterval = setInterval(updateTimer, 1000);
-                isRunning = true;
-            }
-        }
-
-        function pauseTimer() {
-            if (isRunning) {
-                clearInterval(timerInterval);
-                isRunning = false;
-            }
-        }
-
-        function stopTimer() {
-            clearInterval(timerInterval);
-            isRunning = false;
-            
-            if (elapsedTime > 0) {
-                saveStudyTime(elapsedTime);
-                alert('学习时间已保存！');
-            }
-            
-            elapsedTime = 0;
-            updateTimer();
-            updateAllDisplays();
-        }
-
-        function updateTimer() {
-            if (isRunning) {
-                elapsedTime = Date.now() - startTime;
-            }
-            
-            const totalSeconds = Math.floor(elapsedTime / 1000);
-            const hours = Math.floor(totalSeconds / 3600);
-            const minutes = Math.floor((totalSeconds % 3600) / 60);
-            const seconds = totalSeconds % 60;
-            
-            const display = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            document.getElementById('timer').textContent = display;
-        }
-
-        // 保存学习时间
-        function saveStudyTime(timeMs) {
-            const today = new Date().toDateString();
-            let studyData = JSON.parse(localStorage.getItem('studyData') || '{}');
-            
-            if (!studyData[today]) {
-                studyData[today] = { 
-                    totalTime: 0, 
-                    records: [],
-                    vocabCount: 0,
-                    readingCount: 0,
-                    listeningTime: 0
-                };
-            }
-            
-            studyData[today].totalTime += timeMs;
-            localStorage.setItem('studyData', JSON.stringify(studyData));
-        }
-
-        // 学习打卡功能
-        function submitRecord() {
-            const studyType = document.getElementById('studyType').value;
-            const studyContent = document.getElementById('studyContent').value;
-            const wordCount = document.getElementById('wordCount').value || 0;
-            
-            if (!studyContent.trim()) {
-                alert('请填写学习内容！');
-                return;
-            }
-            
-            const today = new Date().toDateString();
-            let studyData = JSON.parse(localStorage.getItem('studyData') || '{}');
-            
-            if (!studyData[today]) {
-                studyData[today] = { 
-                    totalTime: 0, 
-                    records: [],
-                    vocabCount: 0,
-                    readingCount: 0,
-                    listeningTime: 0
-                };
-            }
-            
-            studyData[today].records.push({
-                type: studyType,
-                content: studyContent,
-                wordCount: parseInt(wordCount),
-                time: new Date().toLocaleTimeString()
-            });
-            
-            // 更新词汇计数
-            if (studyType === 'vocabulary') {
-                studyData[today].vocabCount += parseInt(wordCount);
-            }
-            
-            localStorage.setItem('studyData', JSON.stringify(studyData));
-            
-            document.getElementById('studyContent').value = '';
-            document.getElementById('wordCount').value = '';
-            
-            alert('打卡成功！');
-            updateAllDisplays();
-        }
-
-        // 模拟题功能
-        function startQuiz(type) {
-            currentQuiz = quizData[type];
-            if (!currentQuiz || currentQuiz.length === 0) {
-                alert('暂无题目');
-                return;
-            }
-            
-            const quiz = currentQuiz[Math.floor(Math.random() * currentQuiz.length)];
-            
-            document.getElementById('quizContainer').innerHTML = `
-                <div class="quiz-question">
-                    <h3>题目：</h3>
-                    <p style="white-space: pre-line;">${quiz.question}</p>
-                    <div class="quiz-options">
-                        ${quiz.options.map((option, index) => 
-                            `<div class="quiz-option" onclick="selectOption(${index}, ${quiz.correct})">${option}</div>`
-                        ).join('')}
-                    </div>
-                    <div id="quizExplanation" style="margin-top: 15px; display: none;">
-                        <p><strong>解释：</strong>${quiz.explanation}</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        function selectOption(selected, correct) {
-            const options = document.querySelectorAll('.quiz-option');
-            options.forEach((option, index) => {
-                if (index === correct) {
-                    option.classList.add('correct');
-                } else if (index === selected && selected !== correct) {
-                    option.classList.add('incorrect');
-                }
-                option.style.pointerEvents = 'none';
-            });
-            
-            document.getElementById('quizExplanation').style.display = 'block';
-            
-            if (selected === correct) {
-                quizScore++;
-                alert('回答正确！');
-            } else {
-                alert('回答错误！');
-            }
-        }
-
-        function showQuizResult() {
-            alert(`当前得分：${quizScore} 分`);
-        }
-
-        // 发音练习功能
-        function initializeSpeechRecognition() {
-            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                recognition = new (window.webkitSpeechRecognition || window.SpeechRecognition)();
-                recognition.lang = 'ja-JP';
-                recognition.continuous = false;
-                recognition.interimResults = false;
-                
-                recognition.onresult = function(event) {
-                    const result = event.results[0][0].transcript;
-                    const confidence = event.results[0][0].confidence;
-                    
-                    analyzePronunciation(result, confidence);
-                    isRecording = false;
-                };
-                
-                recognition.onerror = function(event) {
-                    document.getElementById('pronunciationResult').innerHTML = 
-                        '<p style="color: red;">语音识别出错，请重试</p>';
-                    isRecording = false;
-                };
-                
-                recognition.onend = function() {
-                    isRecording = false;
-                };
-            }
-        }
-
-        function startRecording() {
-            if (!recognition) {
-                alert('浏览器不支持语音识别');
-                return;
-            }
-            
-            if (!isRecording) {
-                recognition.start();
-                isRecording = true;
-                document.getElementById('pronunciationResult').innerHTML = 
-                    '<p style="color: blue;">正在录音...请说出单词</p>';
-            }
-        }
-
-        function stopRecording() {
-            if (recognition && isRecording) {
-                recognition.stop();
-                isRecording = false;
-            }
-        }
-
-        function analyzePronunciation(recognized, confidence) {
-            let feedback = '';
-            let score = Math.round(confidence * 100);
-            let color = '';
-            
-            if (confidence > 0.8) {
-                feedback = '发音很棒！';
-                color = 'green';
-            } else if (confidence > 0.6) {
-                feedback = '发音不错，可以再练习';
-                color = 'orange';
-            } else {
-                feedback = '发音需要改进';
-                color = 'red';
-            }
-            
-            document.getElementById('pronunciationResult').innerHTML = `
-                <div class="pronunciation-feedback" style="border: 2px solid ${color}; padding: 15px; border-radius: 8px;">
-                    <p><strong>识别结果：</strong>${recognized}</p>
-                    <p><strong>准确度：</strong>${score}%</p>
-                    <p style="color: ${color};"><strong>反馈：</strong>${feedback}</p>
-                </div>
-            `;
-        }
-
-        function playReference() {
-            if ('speechSynthesis' in window) {
-                speechSynthesis.cancel();
-                
-                const utterance = new SpeechSynthesisUtterance(currentWord);
-                utterance.lang = 'ja-JP';
-                utterance.rate = 0.8;
-                
-                const voices = speechSynthesis.getVoices();
-                const japaneseVoice = voices.find(voice => voice.lang.includes('ja'));
-                if (japaneseVoice) {
-                    utterance.voice = japaneseVoice;
-                }
-                
-                speechSynthesis.speak(utterance);
-            }
-        }
-
-        function changeWord() {
-            const randomIndex = Math.floor(Math.random() * practiceWords.length);
-            const selectedWord = practiceWords[randomIndex];
-            
-            currentWord = selectedWord.word;
-            document.getElementById('practiceWord').textContent = selectedWord.word;
-            document.getElementById('practiceReading').textContent = selectedWord.reading;
-            document.getElementById('practiceMeaning').textContent = selectedWord.meaning;
-            document.getElementById('pronunciationResult').innerHTML = '';
-        }
-
-        // 更新显示数据
-        function updateAllDisplays() {
-            const studyData = JSON.parse(localStorage.getItem('studyData') || '{}');
-            const today = new Date().toDateString();
-            
-            // 更新统计数据
-            const todayData = studyData[today] || { totalTime: 0 };
-            const todayHours = (todayData.totalTime + elapsedTime) / 3600000;
-            document.getElementById('todayHours').textContent = todayHours.toFixed(1);
-            
-            let totalHours = 0;
-            let totalDays = 0;
-            Object.values(studyData).forEach(day => {
-                totalHours += day.totalTime / 3600000;
-                if (day.totalTime > 0) totalDays++;
-            });
-            document.getElementById('totalHours').textContent = totalHours.toFixed(0);
-            
-            // 连续学习天数
-            let streakDays = 0;
-            let currentDate = new Date();
-            while (true) {
-                const dateStr = currentDate.toDateString();
-                if (studyData[dateStr] && studyData[dateStr].totalTime > 0) {
-                    streakDays++;
-                    currentDate.setDate(currentDate.getDate() - 1);
-                } else {
-                    break;
-                }
-            }
-            document.getElementById('streakDays').textContent = streakDays;
-            
-            // 日均学习时长
-            const avgDaily = totalDays > 0 ? totalHours / totalDays : 0;
-            document.getElementById('avgDaily').textContent = avgDaily.toFixed(1);
-            
-            // 更新记录列表
-            updateRecordList();
-        }
-
-        function updateRecordList() {
-            const studyData = JSON.parse(localStorage.getItem('studyData') || '{}');
-            const recordList = document.getElementById('recordList');
-            
-            recordList.innerHTML = '';
-            
-            const sortedDates = Object.keys(studyData).sort((a, b) => new Date(b) - new Date(a));
-            
-            sortedDates.slice(0, 10).forEach(dateStr => {
-                const dayData = studyData[dateStr];
-                const date = new Date(dateStr);
-                
-                if (dayData.records && dayData.records.length > 0) {
-                    dayData.records.forEach(record => {
-                        const item = document.createElement('div');
-                        item.className = 'record-item';
-                        
-                        const typeNames = {
-                            vocabulary: '词汇学习',
-                            grammar: '语法练习',
-                            reading: '阅读理解',
-                            listening: '听力训练'
-                        };
-                        
-                        item.innerHTML = `
-                            <div class="record-date">
-                                ${typeNames[record.type]} | ${date.getMonth() + 1}月${date.getDate()}日 ${record.time}
-                            </div>
-                            <div>
-                                ${record.content}
-                                ${record.wordCount > 0 ? ` | 新学单词: ${record.wordCount}个` : ''}
-                            </div>
-                        `;
-                        
-                        recordList.appendChild(item);
-                    });
-                }
-            });
-        }
-
-        function loadData() {
-            updateAllDisplays();
-        }
-
-        // 每秒更新计时器
-        setInterval(() => {
-            if (isRunning) {
-                updateTimer();
-            }
-        }, 1000);
+        // 在控制台中添加清除API Key的方法
+        window.clearApiKey = clearApiKey;
     </script>
 </body>
 </html>
